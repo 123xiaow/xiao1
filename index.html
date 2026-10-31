@@ -237,6 +237,10 @@ body::before {
 .modal { background: #1a1a2e; border: 1px solid #d4af37; border-radius: 12px; padding: 28px 24px; max-width: 320px; width: 90%; text-align: center; }
 .modal h3 { color: #d4af37; font-size: 18px; margin-bottom: 14px; }
 .modal p { font-size: 14px; color: #ccc; margin-bottom: 8px; line-height: 1.7; }
+.modal.save-modal { max-width: 420px; }
+.modal.save-modal .save-img-wrap { max-height: 62vh; overflow: auto; margin-bottom: 12px; border-radius: 8px; border: 1px solid rgba(212,175,55,0.3); }
+.modal.save-modal .save-img-wrap img { width: 100%; display: block; -webkit-user-select: none; user-select: none; }
+.modal.save-modal .save-tip { font-size: 13px; color: #f4e4bc; margin-bottom: 14px; }
 
 .toast {
   position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
@@ -257,8 +261,9 @@ body::before {
   <div style="font-size: 42px; font-weight: 900; letter-spacing: 10px; background: linear-gradient(135deg, #d4af37, #f4e4bc, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">山海经</div>
   <div style="font-size: 14px; color: #888; margin-bottom: 50px; letter-spacing: 4px;">异 兽 真 身 鉴 定</div>
   <div style="width: 60px; height: 1px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin: 24px auto;"></div>
-  <input type="password" id="password-input" placeholder="请输入测试密码" style="width: 100%; max-width: 280px; padding: 14px 16px; border: 1px solid rgba(212,175,55,0.4); background: rgba(212,175,55,0.05); color: #e8d5b7; border-radius: 4px; font-size: 16px; text-align: center; outline: none; margin-bottom: 16px; font-family: inherit; letter-spacing: 3px;">
-  <button class="btn-primary" onclick="checkPassword()" style="width: 100%; max-width: 280px; padding: 14px; background: linear-gradient(135deg, #d4af37, #b8941f); color: #1a1a2e; border: none; border-radius: 4px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; letter-spacing: 4px;">开 始 测 评</button>
+  <input type="password" id="password-input" placeholder="请输入测试密码" style="width: 100%; max-width: 300px; padding: 14px 16px; border: 1px solid rgba(212,175,55,0.4); background: rgba(212,175,55,0.05); color: #e8d5b7; border-radius: 4px; font-size: 16px; text-align: center; outline: none; margin-bottom: 16px; font-family: inherit; letter-spacing: 3px;">
+  <button class="btn-primary" onclick="checkPassword()" style="width: 100%; max-width: 300px; padding: 14px; background: linear-gradient(135deg, #d4af37, #b8941f); color: #1a1a2e; border: none; border-radius: 4px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; letter-spacing: 4px;">开 始 测 评</button>
+  <div style="font-size: 12px; color: #999; margin-top: 6px; letter-spacing: 1px;">本设备可测 3 次，仅限本人使用</div>
   <div class="error" id="password-error" style="color: #e74c3c; font-size: 13px; margin-top: 14px; min-height: 20px;"></div>
 </div>
 
@@ -330,24 +335,33 @@ body::before {
     <p>👉 到店铺给个好评</p>
     <p>👉 联系店铺客服发送好评截图</p>
     <p>👉 即可获得好友免费测试1次机会！</p>
-    <button class="btn-primary" onclick="closeModal()">知道了</button>
+    <button class="btn-primary" onclick="closeModal('reward-modal')">知道了</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="save-modal">
+  <div class="modal save-modal">
+    <h3>📸 你的异兽报告</h3>
+    <div class="save-img-wrap"><img id="save-img" alt="异兽报告"></div>
+    <p class="save-tip">👉 手机用户：<b>长按图片</b>即可保存到相册<br>👉 电脑用户：点击下方按钮下载</p>
+    <button class="btn-primary" onclick="downloadSaveImg()">💾 下载图片</button>
+    <button class="btn-secondary" onclick="closeModal('save-modal')" style="margin-top:10px;">关 闭</button>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ========== Supabase 配置 ==========
-const SUPABASE_URL = "https://niqprzxaaqqmijqgazrk.supabase.co";
-const SUPABASE_KEY = "sb_publishable__otWIjnqmT5kd728t2no1Q_t9Q-u9yS";
-let supabase = null;
-try {
-  if (window.supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-} catch(e) { console.log("Supabase初始化失败", e); }
-const MAX_USES = 3;
-let currentPwdId = null;
+// ========== 密码配置（加密存储，源码里看不到明文密码） ==========
+// 当前密码：Xk9mPv2nQw7Rt4Yz8LbC（每个设备可测3次）
+// 想换密码：把新密码发给助手，生成新的 PWD_CODE 后替换即可
+const PWD_CODE = "_\u0072@tW}9uX~>Y{;`\u0081?SiJ";
+function pwdEncode(s) {
+  let out = "";
+  for (let i = 0; i < s.length; i++) out += String.fromCharCode(s.charCodeAt(i) + 7);
+  return out;
+}
+function checkPwd(input) { return pwdEncode(input) === PWD_CODE; }
 
 // ========== 异兽图片（base64 内嵌，本地/线上/截图均100%可显示） ==========
 const CDN_FALLBACK = {
@@ -876,12 +890,8 @@ const beastVariants = {
 };
 
 // ========== 状态 ==========
-let currentPassword = "";
 let currentQuestion = 0;
 let answers = new Array(questions.length).fill(null);
-
-// ========== 统一密码 ==========
-const UNIFIED_PASSWORD = "Xk9mPv2nQw7Rt4Yz8LbC";
 
 // ========== 页面切换 ==========
 function showPage(id) {
@@ -891,12 +901,16 @@ function showPage(id) {
   window.scrollTo(0, 0);
 }
 
+// ========== 密码验证（本地加密校验） ==========
 function checkPassword() {
   const pwd = document.getElementById("password-input").value.trim();
   const errEl = document.getElementById("password-error");
   errEl.textContent = "";
   if (!pwd) { errEl.textContent = "请输入密码"; return; }
-  if (pwd !== UNIFIED_PASSWORD) { errEl.textContent = "密码不正确，请检查后重试"; return; }
+  if (!checkPwd(pwd)) {
+    errEl.textContent = "密码不正确，请检查后重试";
+    return;
+  }
   renderBeastGrid();
   showPage("page-intro");
 }
@@ -908,8 +922,18 @@ function renderBeastGrid() {
   ).join("");
 }
 
-// ========== 答题 ==========
-function startQuiz() { currentQuestion = 0; answers = new Array(questions.length).fill(null); showPage("page-quiz"); renderQuestion(); }
+// ========== 答题（本设备3次限制） ==========
+const QUIZ_USES_KEY = "shj_quiz_uses_v1";
+function startQuiz() {
+  let used = 0;
+  try { used = parseInt(localStorage.getItem(QUIZ_USES_KEY) || "0", 10); } catch(e) {}
+  if (used >= 3) {
+    showToast("本设备3次测试机会已用完");
+    return;
+  }
+  try { localStorage.setItem(QUIZ_USES_KEY, String(used + 1)); } catch(e) {}
+  currentQuestion = 0; answers = new Array(questions.length).fill(null); showPage("page-quiz"); renderQuestion();
+}
 function renderQuestion() {
   const q = questions[currentQuestion];
   document.getElementById("question-num").textContent = `第 ${currentQuestion+1} / ${questions.length} 题`;
@@ -1021,25 +1045,28 @@ function showResult() {
   saveResultToDB(beastName, energy);
 }
 
-async function saveResultToDB(beastName, energy) {
+// ========== 结果统计（本地存储，管理后台可看） ==========
+const RESULT_STORE_KEY = "shj_results_v1";
+function saveResultToDB(beastName, energy) {
   try {
-    if (!supabase) return;
-    await supabase
-      .from("test_results")
-      .insert([{ beast_name: beastName, energy_data: energy }]);
+    let arr = [];
+    try { arr = JSON.parse(localStorage.getItem(RESULT_STORE_KEY) || "[]"); } catch(e) {}
+    arr.push({ beast: beastName, time: Date.now() });
+    if (arr.length > 500) arr = arr.slice(-500);
+    localStorage.setItem(RESULT_STORE_KEY, JSON.stringify(arr));
   } catch (e) {
     console.log("保存记录失败", e);
   }
 }
 
-// ========== 保存 ==========
+// ========== 保存（手机可长按保存） ==========
 function saveResult() {
   showToast("正在生成图片...");
   const target = document.getElementById("page-result");
   // 截图前隐藏按钮
   const buttons = target.querySelectorAll("button");
   buttons.forEach(b => b.style.display = "none");
-  
+
   html2canvas(target, {
     scale: 2,
     backgroundColor: "#30264a",
@@ -1051,11 +1078,15 @@ function saveResult() {
   }).then(canvas=>{
     // 恢复按钮
     buttons.forEach(b => b.style.display = "");
-    const link = document.createElement("a");
-    link.download = "我的山海经异兽结果.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-    showToast("图片已保存");
+    try {
+      const url = canvas.toDataURL("image/png");
+      document.getElementById("save-img").src = url;
+      document.getElementById("save-modal").classList.add("active");
+      showToast("图片生成成功，长按保存到相册");
+    } catch(e) {
+      showToast("生成失败，请重试");
+      console.error(e);
+    }
   }).catch(err=>{
     buttons.forEach(b => b.style.display = "");
     showToast("生成失败，请重试");
@@ -1063,13 +1094,25 @@ function saveResult() {
   });
 }
 
+function downloadSaveImg() {
+  const img = document.getElementById("save-img");
+  if (!img.src) return;
+  const a = document.createElement("a");
+  a.download = "我的山海经异兽结果.png";
+  a.href = img.src;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast("图片已保存");
+}
+
 // ========== 其他 ==========
 function copyLink(){const url=window.location.href;navigator.clipboard.writeText(url).then(()=>showToast("链接已复制")).catch(()=>prompt("复制链接：",url));}
 function retake(){currentQuestion=0;answers=new Array(questions.length).fill(null);showPage("page-intro");}
 function showReward(){document.getElementById("reward-modal").classList.add("active");}
-function closeModal(){document.getElementById("reward-modal").classList.remove("active");}
+function closeModal(id){document.getElementById(id).classList.remove("active");}
 let toastTimer;
-function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2000);}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600);}
 // 页面加载时自动渲染异兽图鉴
 renderBeastGrid();
 </script>

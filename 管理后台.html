@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>山海经测评 - 管理后台</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f5f7; color: #333; line-height: 1.6; }
@@ -22,45 +21,24 @@ body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
 .login-box button { width: 100%; padding: 12px; background: #1a1a2e; color: #d4af37; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; }
 .login-box .error { color: #e74c3c; font-size: 13px; margin-top: 10px; min-height: 20px; }
 
-.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
 .stat-card { background: #fff; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
 .stat-card .num { font-size: 28px; font-weight: 700; color: #1a1a2e; }
 .stat-card .label { font-size: 12px; color: #888; margin-top: 4px; }
 
 .section { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-.section-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1a1a2e; display: flex; justify-content: space-between; align-items: center; }
-.section-title .add-btn { background: #d4af37; color: #1a1a2e; border: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+.section-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1a1a2e; }
 
-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-th { text-align: left; padding: 10px 8px; border-bottom: 2px solid #f0f0f0; color: #888; font-weight: 500; font-size: 13px; }
-td { padding: 10px 8px; border-bottom: 1px solid #f5f5f5; }
-tr:hover { background: #fafafa; }
-
-.tag { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 12px; }
-.tag-green { background: #e8f5e9; color: #2e7d32; }
-.tag-yellow { background: #fff8e1; color: #f57c00; }
-.tag-red { background: #ffebee; color: #c62828; }
-
-.btn-sm { padding: 4px 10px; border-radius: 5px; border: 1px solid #ddd; background: #fff; font-size: 12px; cursor: pointer; margin-right: 4px; }
-.btn-sm:hover { background: #f5f5f5; }
-.btn-sm.danger { color: #c62828; border-color: #ffcdd2; }
-.btn-sm.primary { background: #1a1a2e; color: #d4af37; border-color: #1a1a2e; }
+.pwd-box { background: #faf8f0; border: 1px solid #e8dcb8; border-radius: 8px; padding: 16px; }
+.pwd-box .pwd-text { font-size: 22px; font-weight: 700; color: #1a1a2e; letter-spacing: 2px; text-align: center; margin: 10px 0; font-family: Consolas, monospace; }
+.pwd-box .pwd-copy { display: block; margin: 0 auto; padding: 8px 24px; background: #d4af37; color: #1a1a2e; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
+.pwd-box .tip { font-size: 13px; color: #888; margin-top: 12px; line-height: 1.8; }
 
 .beast-bar { display: flex; align-items: center; margin-bottom: 8px; font-size: 13px; }
 .beast-bar .name { width: 60px; color: #555; }
 .beast-bar .bar { flex: 1; height: 18px; background: #f0f0f0; border-radius: 9px; margin: 0 10px; overflow: hidden; }
 .beast-bar .fill { height: 100%; background: linear-gradient(90deg, #d4af37, #f4e4bc); border-radius: 9px; }
 .beast-bar .count { width: 40px; text-align: right; color: #888; }
-
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
-.modal-overlay.active { display: flex; }
-.modal { background: #fff; border-radius: 12px; padding: 24px; width: 90%; max-width: 360px; }
-.modal h3 { font-size: 17px; margin-bottom: 16px; }
-.modal input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 14px; }
-.modal .modal-btns { display: flex; gap: 10px; margin-top: 16px; }
-.modal .modal-btns button { flex: 1; padding: 10px; border-radius: 8px; border: none; font-size: 14px; cursor: pointer; }
-.modal .btn-cancel { background: #f0f0f0; color: #666; }
-.modal .btn-ok { background: #1a1a2e; color: #d4af37; }
 
 .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 13px; opacity: 0; transition: opacity 0.3s; z-index: 200; }
 .toast.show { opacity: 1; }
@@ -90,39 +68,25 @@ tr:hover { background: #fafafa; }
   </div>
   <div class="container">
     <div class="stats-row">
-      <div class="stat-card"><div class="num" id="stat-total-pwd">-</div><div class="label">密码总数</div></div>
-      <div class="stat-card"><div class="num" id="stat-used-pwd">-</div><div class="label">已使用密码</div></div>
-      <div class="stat-card"><div class="num" id="stat-remaining">-</div><div class="label">剩余测试次数</div></div>
       <div class="stat-card"><div class="num" id="stat-total-tests">-</div><div class="label">总测试次数</div></div>
+      <div class="stat-card"><div class="num" id="stat-today-tests">-</div><div class="label">今日测试</div></div>
     </div>
 
     <div class="section">
-      <div class="section-title">
-        🔑 密码管理
-        <button class="add-btn" onclick="showAddPwd()">+ 新增密码</button>
+      <div class="section-title">🔑 当前测试密码（发给买家）</div>
+      <div class="pwd-box">
+        <div class="pwd-text" id="current-pwd">Xk9mPv2nQw7Rt4Yz8LbC</div>
+        <button class="pwd-copy" onclick="copyPwd()">📋 复制密码</button>
+        <div class="tip">
+          💡 每个设备可测 3 次（换手机可再测 3 次）<br>
+          🔄 想换密码：把新密码发给豆包助手生成新代码，重新上传 index.html 即可，旧密码立即作废
+        </div>
       </div>
-      <div id="pwd-loading" class="loading">加载中...</div>
-      <table id="pwd-table" style="display:none;">
-        <thead><tr><th>密码</th><th>状态</th><th>已用/上限</th><th>备注</th><th>操作</th></tr></thead>
-        <tbody id="pwd-tbody"></tbody>
-      </table>
     </div>
 
     <div class="section">
-      <div class="section-title">📊 异兽结果分布</div>
+      <div class="section-title">📊 异兽结果分布（本机统计）</div>
       <div id="beast-dist" class="loading">加载中...</div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="add-pwd-modal">
-  <div class="modal">
-    <h3>新增密码</h3>
-    <input type="text" id="new-pwd" placeholder="密码（如 shanhai011）">
-    <input type="text" id="new-pwd-note" placeholder="备注（如：发给小红书用户xxx）">
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal('add-pwd-modal')">取消</button>
-      <button class="btn-ok" onclick="addPwd()">确认添加</button>
     </div>
   </div>
 </div>
@@ -130,9 +94,6 @@ tr:hover { background: #fafafa; }
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = "https://niqprzxaaqqmijqgazrk.supabase.co";
-const SUPABASE_KEY = "sb_publishable__otWIjnqmT5kd728t2no1Q_t9Q-u9yS";
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ADMIN_PASSWORD = "admin888";
 
 function adminLogin() {
@@ -150,69 +111,25 @@ function adminLogout() {
   location.reload();
 }
 
-async function showAdmin() {
+function showAdmin() {
   document.getElementById("login-page").style.display = "none";
   document.getElementById("admin-page").style.display = "block";
-  await loadData();
+  loadData();
 }
 
-async function loadData() {
-  // 加载密码列表
-  const { data: pwds, error } = await supabase
-    .from("passwords")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    showToast("加载失败: " + error.message);
-    return;
-  }
-
-  // 加载测试结果统计
-  const { data: results } = await supabase
-    .from("test_results")
-    .select("beast_name");
-
-  renderStats(pwds, results || []);
-  renderPwdTable(pwds || []);
-  renderBeastDist(results || []);
-}
-
-function renderStats(pwds, results) {
-  document.getElementById("stat-total-pwd").textContent = pwds.length;
-  const usedPwds = pwds.filter(p => p.used_count > 0).length;
-  document.getElementById("stat-used-pwd").textContent = usedPwds;
-  const remaining = pwds.reduce((sum, p) => sum + Math.max(0, p.max_uses - p.used_count), 0);
-  document.getElementById("stat-remaining").textContent = remaining;
+function loadData() {
+  let results = [];
+  try { results = JSON.parse(localStorage.getItem("shj_results_v1") || "[]"); } catch(e) {}
+  const today = new Date().toDateString();
+  const todayCount = results.filter(r => new Date(r.time).toDateString() === today).length;
   document.getElementById("stat-total-tests").textContent = results.length;
-}
-
-function renderPwdTable(pwds) {
-  document.getElementById("pwd-loading").style.display = "none";
-  document.getElementById("pwd-table").style.display = "table";
-  const tbody = document.getElementById("pwd-tbody");
-  tbody.innerHTML = pwds.map((p) => {
-    const status = p.used_count >= p.max_uses
-      ? '<span class="tag tag-red">已用完</span>'
-      : p.used_count > 0
-      ? '<span class="tag tag-yellow">使用中</span>'
-      : '<span class="tag tag-green">未使用</span>';
-    return `<tr>
-      <td><code>${p.password}</code></td>
-      <td>${status}</td>
-      <td>${p.used_count} / ${p.max_uses}</td>
-      <td>${p.note || "-"}</td>
-      <td>
-        <button class="btn-sm" onclick="copyPwd('${p.password}')">复制</button>
-        <button class="btn-sm danger" onclick="delPwd('${p.id}')">删除</button>
-      </td>
-    </tr>`;
-  }).join("");
+  document.getElementById("stat-today-tests").textContent = todayCount;
+  renderBeastDist(results);
 }
 
 function renderBeastDist(results) {
   const counts = {};
-  results.forEach(r => { counts[r.beast_name] = (counts[r.beast_name] || 0) + 1; });
+  results.forEach(r => { counts[r.beast] = (counts[r.beast] || 0) + 1; });
   const entries = Object.entries(counts).sort((a,b) => b[1]-a[1]);
   const max = Math.max(...entries.map(e => e[1]), 1);
   document.getElementById("beast-dist").innerHTML = entries.length
@@ -223,39 +140,11 @@ function renderBeastDist(results) {
           <span class="count">${count}</span>
         </div>`
       ).join("")
-    : "暂无测试数据";
+    : "暂无测试数据（需要先在测试页面完成一次测试）";
 }
 
-function showAddPwd() { document.getElementById("add-pwd-modal").classList.add("active"); }
-function closeModal(id) { document.getElementById(id).classList.remove("active"); }
-
-async function addPwd() {
-  const pwd = document.getElementById("new-pwd").value.trim();
-  const note = document.getElementById("new-pwd-note").value.trim();
-  if (!pwd) { showToast("请输入密码"); return; }
-  const { error } = await supabase
-    .from("passwords")
-    .insert([{ password: pwd, note: note }]);
-  if (error) {
-    showToast("添加失败: " + error.message);
-  } else {
-    showToast("密码已添加");
-    closeModal("add-pwd-modal");
-    document.getElementById("new-pwd").value = "";
-    document.getElementById("new-pwd-note").value = "";
-    loadData();
-  }
-}
-
-async function delPwd(id) {
-  if (confirm("确定删除这个密码？")) {
-    await supabase.from("passwords").delete().eq("id", id);
-    showToast("已删除");
-    loadData();
-  }
-}
-
-function copyPwd(pwd) {
+function copyPwd() {
+  const pwd = document.getElementById("current-pwd").textContent.trim();
   navigator.clipboard.writeText(pwd).then(() => showToast("密码已复制: " + pwd));
 }
 
