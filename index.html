@@ -5,19 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>山海经异兽真身鉴定</title>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="beast_b64.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> -->
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap');
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: "Noto Serif SC", "PingFang SC", "Microsoft YaHei", serif;
-  background: #0f0e17; color: #e8d5b7; min-height: 100vh; line-height: 1.8;
+  background: linear-gradient(180deg, #1a1020 0%, #2a1a2e 30%, #1f1530 60%, #1a1020 100%);
+  color: #fff; min-height: 100vh; line-height: 1.8; font-size: 16px;
 }
 body::before {
   content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(ellipse at 20% 20%, rgba(212,175,55,0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(100,80,150,0.1) 0%, transparent 50%);
+  background: url("https://aka.doubaocdn.com/s/l3sqx3HROu") center/cover no-repeat fixed;
+  opacity: 0.5;
   pointer-events: none; z-index: 0;
 }
 
@@ -28,8 +30,8 @@ body::before {
 /* ===== 密码页 ===== */
 #page-password { flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 90vh; }
 #page-password.active { display: flex; }
-#page-password .title { font-size: 36px; font-weight: 900; letter-spacing: 8px; background: linear-gradient(135deg, #d4af37, #f4e4bc, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
-#page-password .subtitle { font-size: 14px; color: #888; margin-bottom: 50px; letter-spacing: 4px; }
+#page-password .title { font-size: 42px; font-weight: 900; letter-spacing: 8px; background: linear-gradient(135deg, #d4af37, #f4e4bc, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+#page-password .subtitle { font-size: 16px; color: rgba(255,255,255,0.8); margin-bottom: 50px; letter-spacing: 4px; }
 #page-password .divider { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin: 24px auto; }
 #page-password input {
   width: 100%; max-width: 280px; padding: 14px 16px; border: 1px solid rgba(212,175,55,0.4);
@@ -57,8 +59,8 @@ body::before {
 
 /* ===== 须知页 ===== */
 #page-intro .header { text-align: center; margin-bottom: 24px; }
-#page-intro .header h1 { font-size: 22px; color: #d4af37; margin-bottom: 8px; font-weight: 700; letter-spacing: 3px; }
-#page-intro .header p { font-size: 13px; color: #888; }
+#page-intro .header h1 { font-size: 26px; color: #fff; margin-bottom: 10px; font-weight: 700; letter-spacing: 3px; }
+#page-intro .header p { font-size: 15px; color: rgba(255,255,255,0.8); }
 
 #page-intro .beast-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
 #page-intro .beast-card {
@@ -66,8 +68,8 @@ body::before {
   border-radius: 8px; padding: 10px; text-align: center; overflow: hidden;
 }
 #page-intro .beast-card img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; margin-bottom: 8px; }
-#page-intro .beast-card .beast-name { font-size: 15px; font-weight: 700; color: #d4af37; margin-bottom: 2px; letter-spacing: 2px; }
-#page-intro .beast-card .beast-desc { font-size: 10px; color: #888; line-height: 1.4; }
+#page-intro .beast-card .beast-name { font-size: 16px; font-weight: 700; color: #d4af37; margin-bottom: 2px; letter-spacing: 2px; }
+#page-intro .beast-card .beast-desc { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.4; }
 
 #page-intro .info-row { display: flex; gap: 10px; margin: 20px 0; }
 #page-intro .info-box {
@@ -75,62 +77,159 @@ body::before {
   border-radius: 8px; padding: 14px 10px; text-align: center;
 }
 #page-intro .info-box .info-icon { font-size: 20px; margin-bottom: 6px; }
-#page-intro .info-box h3 { font-size: 13px; color: #d4af37; margin-bottom: 6px; }
-#page-intro .info-box p { font-size: 11px; color: #999; line-height: 1.5; }
+#page-intro .info-box h3 { font-size: 16px; color: #fff; margin-bottom: 8px; }
+#page-intro .info-box p { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5; }
 
 /* ===== 答题页 ===== */
-#page-quiz .progress-bar { height: 3px; background: rgba(212,175,55,0.15); border-radius: 2px; margin-bottom: 24px; }
-#page-quiz .progress-fill { height: 100%; background: linear-gradient(90deg, #d4af37, #f4e4bc); border-radius: 2px; transition: width 0.3s; }
-#page-quiz .question-num { font-size: 13px; color: #d4af37; margin-bottom: 12px; letter-spacing: 1px; }
-#page-quiz .question-text { font-size: 19px; font-weight: 600; margin-bottom: 28px; color: #e8d5b7; line-height: 1.6; }
-#page-quiz .options { display: flex; flex-direction: column; gap: 12px; }
+#page-quiz .quiz-panel {
+  background: linear-gradient(180deg, rgba(212,175,55,0.08), rgba(255,255,255,0.02));
+  border: 1px solid rgba(212,175,55,0.25);
+  border-radius: 16px; padding: 24px 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35), inset 0 0 60px rgba(212,175,55,0.04);
+  position: relative; overflow: hidden;
+}
+#page-quiz .quiz-panel::before {
+  content: "☯"; position: absolute; top: -20px; right: -10px; font-size: 90px;
+  color: rgba(212,175,55,0.07); transform: rotate(15deg); pointer-events: none;
+}
+#page-quiz .quiz-title {
+  text-align: center; font-size: 15px; color: #f4e4bc; letter-spacing: 6px; margin-bottom: 14px;
+  font-weight: 600;
+}
+#page-quiz .progress-bar {
+  position: relative; height: 10px; background: rgba(212,175,55,0.12);
+  border-radius: 6px; margin-bottom: 22px; overflow: visible;
+  border: 1px solid rgba(212,175,55,0.2);
+}
+#page-quiz .progress-fill {
+  height: 100%; background: linear-gradient(90deg, #8a5a2f, #d4af37, #f4e4bc);
+  border-radius: 6px; transition: width 0.4s ease; position: relative;
+  box-shadow: 0 0 12px rgba(212,175,55,0.5);
+}
+#page-quiz .progress-spark {
+  position: absolute; top: -5px; left: 0; width: 18px; height: 18px; border-radius: 50%;
+  background: radial-gradient(circle, #fff7e0, #d4af37); z-index: 2;
+  box-shadow: 0 0 14px rgba(212,175,55,0.8);
+  transition: left 0.4s ease;
+  pointer-events: none;
+}
+#page-quiz .question-num {
+  display: inline-block; font-size: 15px; color: #1a1a2e; font-weight: 700; letter-spacing: 1px;
+  background: linear-gradient(135deg, #f4e4bc, #d4af37); padding: 5px 18px; border-radius: 20px;
+  margin-bottom: 16px;
+}
+#page-quiz .question-text { font-size: 22px; font-weight: 600; margin-bottom: 26px; color: #fff; line-height: 1.6; }
+#page-quiz .options { display: flex; flex-direction: column; gap: 13px; }
 #page-quiz .option {
-  padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 8px; cursor: pointer; font-size: 15px; transition: all 0.2s;
+  padding: 17px 18px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 12px; cursor: pointer; font-size: 17px; transition: all 0.25s;
+  backdrop-filter: blur(10px); color: #fff; line-height: 1.6;
+  animation: optIn 0.35s ease backwards;
 }
-#page-quiz .option:hover { background: rgba(212,175,55,0.08); border-color: rgba(212,175,55,0.3); }
-#page-quiz .option.selected { background: rgba(212,175,55,0.12); border-color: #d4af37; }
+@keyframes optIn { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+#page-quiz .option:hover {
+  background: linear-gradient(135deg, rgba(212,175,55,0.18), rgba(212,175,55,0.06));
+  border-color: rgba(212,175,55,0.6);
+  transform: translateX(5px);
+  box-shadow: 0 0 16px rgba(212,175,55,0.2);
+}
+#page-quiz .option.selected {
+  background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(212,175,55,0.1));
+  border-color: #d4af37;
+  box-shadow: 0 0 24px rgba(212,175,55,0.35), inset 0 0 20px rgba(212,175,55,0.08);
+  transform: translateX(5px);
+}
 #page-quiz .option .label {
-  display: inline-block; width: 26px; height: 26px; line-height: 26px; text-align: center;
-  background: rgba(212,175,55,0.15); border-radius: 50%; font-size: 13px; margin-right: 10px; color: #d4af37; font-weight: 600;
+  display: inline-block; width: 32px; height: 32px; line-height: 32px; text-align: center;
+  background: linear-gradient(135deg, #d4af37, #b8941f); border-radius: 50%;
+  font-size: 15px; margin-right: 12px; color: #1a1a2e; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(212,175,55,0.4);
 }
+#page-quiz .option.selected .label { background: linear-gradient(135deg, #fff7e0, #f4e4bc); }
 
 /* ===== 结果页 ===== */
 #page-result { padding-bottom: 40px; }
 #page-result .result-hero {
-  background: linear-gradient(180deg, rgba(212,175,55,0.12), rgba(212,175,55,0.03));
-  border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 24px 20px; text-align: center; margin-bottom: 16px;
+  background: linear-gradient(180deg, rgba(212,175,55,0.14), rgba(212,175,55,0.03));
+  border: 1px solid rgba(212,175,55,0.35); border-radius: 16px; padding: 26px 20px; text-align: center; margin-bottom: 16px;
+  position: relative;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35), inset 0 0 80px rgba(212,175,55,0.06);
+}
+#page-result .result-hero::before {
+  content: "☁ ✦ ☁"; position: absolute; top: 10px; left: 0; right: 0;
+  font-size: 16px; color: rgba(212,175,55,0.15); letter-spacing: 20px; pointer-events: none;
+}
+#page-result .result-hero::after {
+  content: "☁ ✦ ☁"; position: absolute; bottom: 10px; left: 0; right: 0;
+  font-size: 16px; color: rgba(212,175,55,0.15); letter-spacing: 20px; pointer-events: none;
 }
 #page-result .result-hero img {
-  width: 100%; max-width: 280px; aspect-ratio: 1; object-fit: cover; border-radius: 12px;
-  margin: 16px auto; display: block; border: 2px solid rgba(212,175,55,0.3);
+  width: 100%; max-width: 280px; aspect-ratio: 1; object-fit: cover; border-radius: 14px;
+  margin: 18px auto; display: block; border: 2px solid rgba(212,175,55,0.4);
+  box-shadow: 0 0 40px rgba(212,175,55,0.2);
 }
-#page-result .result-hero .hero-label { font-size: 12px; color: #888; letter-spacing: 4px; margin-bottom: 8px; }
-#page-result .result-hero .hero-beast { font-size: 42px; font-weight: 900; color: #d4af37; letter-spacing: 8px; margin: 12px 0; text-shadow: 0 0 30px rgba(212,175,55,0.3); }
-#page-result .result-hero .hero-tag { font-size: 15px; color: #f4e4bc; font-style: italic; }
-#page-result .result-hero .hero-divider { width: 40px; height: 1px; background: rgba(212,175,55,0.4); margin: 16px auto; }
+#page-result .result-hero .hero-label { font-size: 15px; color: rgba(255,255,255,0.8); letter-spacing: 5px; margin-bottom: 8px; }
+#page-result .result-hero .hero-beast { font-size: 50px; font-weight: 900; color: #d4af37; letter-spacing: 8px; margin: 12px 0; text-shadow: 0 0 30px rgba(212,175,55,0.4); }
+#page-result .result-hero .hero-tag { font-size: 18px; color: #fff; font-style: italic; }
+#page-result .result-hero .hero-divider { width: 60px; height: 2px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin: 16px auto; border-radius: 2px; }
+#page-result .hero-match {
+  display: inline-block; font-size: 27px; font-weight: 900; color: #fff;
+  margin-top: 10px; padding: 7px 24px;
+  background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.12));
+  border: 2px solid rgba(212,175,55,0.7); border-radius: 40px; letter-spacing: 1px;
+  box-shadow: 0 0 30px rgba(212,175,55,0.35);
+  text-shadow: 0 0 14px rgba(212,175,55,0.6);
+}
+#page-result .hero-match .match-num { color: #ffdf8a; font-size: 34px; }
+#page-result .hero-sub { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 6px; }
 
 #page-result .result-body {
-  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(212,175,55,0.2); border-radius: 16px; padding: 22px 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
 }
 #page-result .energy-bar { margin: 16px 0; }
-#page-result .energy-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 12px; }
-#page-result .energy-row .label { width: 24px; color: #999; font-weight: 600; }
-#page-result .energy-row .bar { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; margin: 0 8px; overflow: hidden; }
-#page-result .energy-row .fill { height: 100%; border-radius: 3px; }
-#page-result .energy-row .pct { width: 36px; text-align: right; color: #999; }
+#page-result .energy-row { display: flex; align-items: center; margin-bottom: 9px; font-size: 14px; }
+#page-result .energy-row .label { width: 28px; color: #f4e4bc; font-weight: 700; }
+#page-result .energy-row .bar { flex: 1; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; margin: 0 8px; overflow: hidden; }
+#page-result .energy-row .fill { height: 100%; border-radius: 4px; }
+#page-result .energy-row .pct { width: 42px; text-align: right; color: #fff; font-weight: 600; }
 
-#page-result .section { margin: 20px 0; }
-#page-result .section h3 { font-size: 14px; color: #d4af37; margin-bottom: 10px; border-bottom: 1px solid rgba(212,175,55,0.15); padding-bottom: 8px; letter-spacing: 1px; }
-#page-result .section p { font-size: 14px; color: #bbb; line-height: 1.9; margin-bottom: 8px; }
-#page-result .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-#page-result .tag { font-size: 12px; padding: 5px 12px; background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25); border-radius: 14px; color: #d4af37; }
-#page-result .detail-item { font-size: 13px; color: #bbb; padding: 4px 0; line-height: 1.7; }
-#page-result .detail-item::before { content: "◆ "; color: rgba(212,175,55,0.5); font-size: 10px; }
-#page-result .final-quote {
-  text-align: center; font-size: 15px; color: #f4e4bc; margin: 24px 0;
-  padding: 20px; background: rgba(212,175,55,0.06); border-radius: 8px; font-style: italic; line-height: 1.8;
+#page-result .section { margin: 22px 0; }
+#page-result .section h3 {
+  font-size: 19px; color: #f4e4bc; margin-bottom: 12px; letter-spacing: 1px;
+  border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom: 10px;
+  padding-left: 12px; position: relative; font-weight: 800;
 }
+#page-result .section h3::before {
+  content: ""; position: absolute; left: 0; top: 2px; bottom: 10px; width: 4px;
+  background: linear-gradient(180deg, #d4af37, #8a5a2f); border-radius: 2px;
+}
+#page-result .section p { font-size: 17px; color: #fff; line-height: 1.9; margin-bottom: 8px; }
+#page-result .tag-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+#page-result .tag { font-size: 15px; padding: 6px 16px; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3); border-radius: 18px; color: #f4e4bc; }
+#page-result .detail-item { font-size: 15px; color: #e8e8f0; padding: 5px 0; line-height: 1.8; }
+#page-result .detail-item::before { content: "◆ "; color: rgba(212,175,55,0.6); font-size: 11px; }
+#page-result .rank-row { display: flex; align-items: center; margin-bottom: 7px; font-size: 14px; }
+#page-result .rank-row .rname { width: 62px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#page-result .rank-row .rbar { flex: 1; height: 10px; background: rgba(255,255,255,0.08); border-radius: 5px; margin: 0 8px; overflow: hidden; }
+#page-result .rank-row .rfill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, #8a6d2f, #d4af37, #f4e4bc); }
+#page-result .rank-row .rpct { width: 48px; text-align: right; color: #f4e4bc; font-weight: 700; }
+#page-result .rank-row.me { background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.35); border-radius: 8px; padding: 5px 8px; }
+#page-result .rank-row.me .rname { color: #ffdf8a; font-weight: 800; }
+#page-result .buff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+#page-result .buff-item { background: rgba(212,175,55,0.07); border: 1px solid rgba(212,175,55,0.25); border-radius: 10px; padding: 12px 8px; text-align: center; }
+#page-result .buff-item .b-label { font-size: 12px; color: rgba(255,255,255,0.65); margin-bottom: 5px; }
+#page-result .buff-item .b-value { font-size: 16px; color: #ffdf8a; font-weight: 700; }
+#page-result .buff-note { margin-top: 10px; font-size: 14px; color: #f4e4bc; text-align: center; font-style: italic; }
+#page-result .final-quote {
+  text-align: center; font-size: 17px; color: #f4e4bc; margin: 26px 0;
+  padding: 24px 18px; background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(212,175,55,0.03));
+  border: 1px dashed rgba(212,175,55,0.4); border-radius: 12px; font-style: italic; line-height: 1.9;
+}
+#page-result .hero-sub { font-size: 15px; color: rgba(255,255,255,0.85); margin-top: 8px; }
 
 /* 弹窗 */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
@@ -154,16 +253,16 @@ body::before {
 </head>
 <body>
 
-<div id="page-password" class="page" style="display:none;">
-  <div class="title">山海经</div>
-  <div class="subtitle">异 兽 真 身 鉴 定</div>
-  <div class="divider"></div>
-  <input type="password" id="password-input" placeholder="请输入测试密码">
-  <button class="btn-primary" onclick="checkPassword()">开 始 测 评</button>
-  <div class="error" id="password-error"></div>
+<div id="page-password" class="page active">
+  <div style="font-size: 42px; font-weight: 900; letter-spacing: 10px; background: linear-gradient(135deg, #d4af37, #f4e4bc, #d4af37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;">山海经</div>
+  <div style="font-size: 14px; color: #888; margin-bottom: 50px; letter-spacing: 4px;">异 兽 真 身 鉴 定</div>
+  <div style="width: 60px; height: 1px; background: linear-gradient(90deg, transparent, #d4af37, transparent); margin: 24px auto;"></div>
+  <input type="password" id="password-input" placeholder="请输入测试密码" style="width: 100%; max-width: 280px; padding: 14px 16px; border: 1px solid rgba(212,175,55,0.4); background: rgba(212,175,55,0.05); color: #e8d5b7; border-radius: 4px; font-size: 16px; text-align: center; outline: none; margin-bottom: 16px; font-family: inherit; letter-spacing: 3px;">
+  <button class="btn-primary" onclick="checkPassword()" style="width: 100%; max-width: 280px; padding: 14px; background: linear-gradient(135deg, #d4af37, #b8941f); color: #1a1a2e; border: none; border-radius: 4px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; letter-spacing: 4px;">开 始 测 评</button>
+  <div class="error" id="password-error" style="color: #e74c3c; font-size: 13px; margin-top: 14px; min-height: 20px;"></div>
 </div>
 
-<div id="page-intro" class="page active">
+<div id="page-intro" class="page">
   <div class="header">
     <h1>你骨子里是哪头上古神兽？</h1>
     <p>中国上古神话中，每一种异兽都对应一种人格原型</p>
@@ -178,13 +277,16 @@ body::before {
 </div>
 
 <div id="page-quiz" class="page">
-  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-  <div class="question-num" id="question-num"></div>
-  <div class="question-text" id="question-text"></div>
-  <div class="options" id="options"></div>
-  <div class="btn-row">
-    <button class="btn-secondary" id="btn-prev" onclick="prevQuestion()" style="margin-top:0;">上一题</button>
-    <button class="btn-primary" id="btn-next" onclick="nextQuestion()" style="margin-top:0;">下一题</button>
+  <div class="quiz-panel">
+    <div class="quiz-title">✨ 灵 魄 探 寻 ✨</div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div><div class="progress-spark" id="progress-spark"></div></div>
+    <div class="question-num" id="question-num"></div>
+    <div class="question-text" id="question-text"></div>
+    <div class="options" id="options"></div>
+    <div class="btn-row">
+      <button class="btn-secondary" id="btn-prev" onclick="prevQuestion()" style="margin-top:0;">上一题</button>
+      <button class="btn-primary" id="btn-next" onclick="nextQuestion()" style="margin-top:0;">下一题</button>
+    </div>
   </div>
 </div>
 
@@ -195,9 +297,11 @@ body::before {
     <div class="hero-beast" id="result-name"></div>
     <div class="hero-divider"></div>
     <div class="hero-tag" id="result-tag"></div>
+    <div class="hero-match" id="result-match"></div>
+    <div class="hero-sub" id="result-sub"></div>
   </div>
   <div class="result-body" id="result-body">
-    <div class="energy-bar" id="energy-bar"></div>
+    <div class="section"><h3>⚡ 五行能量分布</h3><div class="energy-bar" id="energy-bar"></div></div>
     <div class="section"><h3>📖 山海经原文</h3><p id="result-quote"></p></div>
     <div class="section"><h3>🎭 性格画像</h3><p id="result-personality"></p></div>
     <div class="section"><h3>💬 朋友眼中的你</h3><p id="result-friends"></p></div>
@@ -207,6 +311,8 @@ body::before {
     <div class="section"><h3>⚠️ 隐藏弱点</h3><div class="tag-row" id="result-weaknesses"></div></div>
     <div class="section"><h3>🎯 贵人类型</h3><p id="result-lucky"></p></div>
     <div class="section"><h3>🔥 准到冒汗的细节</h3><div id="result-details"></div></div>
+    <div class="section"><h3>🐲 十二兽缘分榜</h3><div id="result-ranking"></div></div>
+    <div class="section"><h3>🍀 你的专属开运buff</h3><div id="result-buff"></div></div>
     <div class="final-quote" id="result-final"></div>
   </div>
   <button class="btn-primary" onclick="saveResult()">📸 保存结果为图片</button>
@@ -243,8 +349,8 @@ try {
 const MAX_USES = 3;
 let currentPwdId = null;
 
-// ========== 异兽图片URL ==========
-const beastImages = {
+// ========== 异兽图片（base64 内嵌，本地/线上/截图均100%可显示） ==========
+const CDN_FALLBACK = {
   "九尾狐": "https://aka.doubaocdn.com/s/rWVCnuaiMA",
   "凤凰": "https://aka.doubaocdn.com/s/Xuwfs2U6VG",
   "毕方": "https://aka.doubaocdn.com/s/YUCFUHDZZO",
@@ -258,6 +364,11 @@ const beastImages = {
   "精卫": "https://aka.doubaocdn.com/s/xpLXGCNdey",
   "鲲鹏": "https://aka.doubaocdn.com/s/TiPDdgxil8"
 };
+const BEAST_KEY = {"九尾狐":"jiuwei","凤凰":"fenghuang","毕方":"bifang","鹿蜀":"lashu","当康":"dangkang","白泽":"baize","天狗":"tiangou","麒麟":"qilin","鲛人":"jiaoren","何罗鱼":"heluo","精卫":"jingwei","鲲鹏":"kunpeng"};
+const beastImages = {};
+Object.keys(BEAST_KEY).forEach(name => {
+  beastImages[name] = (window.BEAST_IMAGES && window.BEAST_IMAGES[BEAST_KEY[name]]) ? window.BEAST_IMAGES[BEAST_KEY[name]] : CDN_FALLBACK[name];
+});
 
 // ========== 异兽图鉴 ==========
 const beastList = [
@@ -275,38 +386,218 @@ const beastList = [
   { name: "鲲鹏", desc: "深藏不露，大器晚成" }
 ];
 
-// ========== 题目 ==========
+// ========== 题目（30题×6选项，每选项含五行 e + 性格维度标签 tags） ==========
 const questions = [
-  { q: "周末终于没人找你了，你的第一反应是？", opts: [{t:"立刻约人！一个人待着多浪费",e:"火"},{t:"终于可以点外卖追剧打游戏了",e:"水"},{t:"把房间收拾干净、做顿好饭",e:"土"},{t:"去没人的地方走走，一个人待着也很爽",e:"木"}]},
-  { q: "朋友合照里，你通常是那个？", opts: [{t:"站C位负责摆pose搞气氛的",e:"火"},{t:"躲在镜头后面偷拍别人的",e:"水"},{t:"帮大家拎包、照顾每个人情绪的",e:"土"},{t:"表情最鬼马、最出片的那个",e:"木"}]},
-  { q: "你交朋友通常是？", opts: [{t:"朋友遍天下，到哪都能认识新朋友",e:"火"},{t:"朋友不多但个个是交心的",e:"水"},{t:"老朋友们从小玩到大，不怎么加新朋友",e:"土"},{t:"看感觉，合得来就处，合不来就算",e:"金"}]},
-  { q: "你发朋友圈的风格通常是？", opts: [{t:"想发就发，美食自拍旅行什么都发",e:"火"},{t:"经常删朋友圈/设三天可见",e:"水"},{t:"几乎不发，但会给别人点赞评论",e:"土"},{t:"很少发，一发就是长文/深度内容",e:"金"}]},
-  { q: "朋友约你出去，但你那天特别累，你会？", opts: [{t:"还是去吧，不去怕大家扫兴",e:"土"},{t:"直接说不去了，我要躺平",e:"水"},{t:"去，但跟大家说好我提前走",e:"木"},{t:"去！换个衣服洗个脸瞬间就精神了",e:"火"}]},
-  { q: "在微信群聊里，你通常是？", opts: [{t:"活跃气氛的那个，段子手担当",e:"火"},{t:"潜水党，偶尔冒个泡",e:"水"},{t:"认真回复每个人的，暖心担当",e:"土"},{t:"只发表情包的，话少但存在感强",e:"木"}]},
-  { q: "排队买奶茶时有人插队到你前面，你会？", opts: [{t:"直接说：\"您好排队哦\"，不怂",e:"金"},{t:"懒得计较，心里翻个白眼就算了",e:"水"},{t:"客气地提醒一句，对方道歉就算了",e:"土"},{t:"拍下来发闺蜜群吐槽，但不当面说",e:"水"}]},
-  { q: "被人误会了，你会？", opts: [{t:"当场解释清楚，不解释不爽",e:"火"},{t:"懒得解释，懂我的人自然懂",e:"水"},{t:"事后找合适的时机慢慢说清楚",e:"土"},{t:"直接用行动证明，说什么都没用",e:"金"}]},
-  { q: "你最受不了别人哪种行为？", opts: [{t:"不坦诚、藏着掖着",e:"金"},{t:"整天负能量、只会抱怨",e:"火"},{t:"不守承诺、说话不算数",e:"土"},{t:"太黏人、没有自己的生活",e:"水"}]},
-  { q: "你知道有人在背后说你坏话，你会？", opts: [{t:"直接找对方当面对质",e:"金"},{t:"无所谓，随便说去吧",e:"水"},{t:"难过但不说，自己慢慢消化",e:"土"},{t:"也在别人那里说回去",e:"火"}]},
-  { q: "深夜失眠时，你脑子里最常转的是？", opts: [{t:"明天的待办清单，越想越清醒",e:"金"},{t:"今天哪句话说错了，反复回放",e:"水"},{t:"各种不切实际的幻想：中大奖、穿越、谈恋爱",e:"木"},{t:"\"人活着到底是为了什么\"这种大问题",e:"水"}]},
-  { q: "压力大的时候，你会？", opts: [{t:"大吃一顿/购物/找人倾诉，发泄出来就好",e:"火"},{t:"一个人待着，谁也不想理，慢慢消化",e:"水"},{t:"打扫房间/整理东西，让环境变整齐心情就好",e:"土"},{t:"立刻列计划解决问题，压力变动力",e:"金"}]},
-  { q: "看一部虐心电影，你的反应是？", opts: [{t:"哭得稀里哗啦，纸巾用一包",e:"火"},{t:"表面没什么，回家偷偷难过好几天",e:"水"},{t:"代入感太强，走不出来",e:"木"},{t:"很冷静地分析剧情逻辑",e:"金"}]},
-  { q: "你上一次大哭是因为什么？", opts: [{t:"看电影/看视频哭的",e:"木"},{t:"压力太大绷不住了",e:"水"},{t:"感动的，有人对我好",e:"土"},{t:"太久没哭了，想不起来了",e:"金"}]},
-  { q: "心情不好的时候，你最常做的事是？", opts: [{t:"吃好吃的",e:"土"},{t:"听歌发呆",e:"水"},{t:"找人吐槽",e:"火"},{t:"逛街买东西",e:"金"}]},
-  { q: "做重要决定时，你通常？", opts: [{t:"凭直觉，第一感觉就是它",e:"火"},{t:"列利弊表分析清楚再动",e:"金"},{t:"问朋友问家人，大家觉得好就好",e:"土"},{t:"跟着感觉走，事后才想为什么",e:"水"}]},
-  { q: "如果用一种颜色代表你现在的状态，你选？", opts: [{t:"烈焰红/落日橙",e:"火"},{t:"草木绿/樱花粉",e:"木"},{t:"大地棕/米白色",e:"土"},{t:"夜空蓝/玄黑色",e:"水"}]},
-  { q: "流落荒岛只能带三样东西，你会选？", opts: [{t:"种子、花苗、小动物——把荒岛变成家",e:"木"},{t:"火种、工具、武器——先活下来再说",e:"金"},{t:"书、画具、乐器——精神世界不能丢",e:"水"},{t:"家人照片、日记、信物——带着回忆走",e:"土"}]},
-  { q: "买东西的时候，你通常？", opts: [{t:"看上就买，不纠结",e:"火"},{t:"比价半天，买最划算的",e:"金"},{t:"问朋友意见，大家说哪个好就买哪个",e:"土"},{t:"看感觉，眼缘最重要",e:"木"}]},
-  { q: "谈恋爱时，你更像哪种？", opts: [{t:"热烈主动，喜欢就追，爱得轰轰烈烈",e:"火"},{t:"慢热试探，需要很久才放下防备",e:"水"},{t:"照顾对方生活起居，像妈妈/爸爸型",e:"土"},{t:"理性独立，两个人在一起也要各自空间",e:"金"}]},
-  { q: "在一段关系里，你最像哪种？", opts: [{t:"付出型，我对你好就想你也对我好",e:"土"},{t:"作精型，没事就想试探你爱不爱我",e:"水"},{t:"懂事型，不添麻烦，你忙你的",e:"土"},{t:"独立型，我自己能搞定，你别管我",e:"金"}]},
-  { q: "你喜欢一个人的表现是？", opts: [{t:"主动接近，制造偶遇",e:"火"},{t:"偷偷关注，不敢让对方知道",e:"水"},{t:"对他好，默默付出",e:"土"},{t:"故意怼他，引起他注意",e:"金"}]},
-  { q: "吵架的时候，你通常？", opts: [{t:"当场说清楚，不隔夜",e:"火"},{t:"冷战，等对方先找我",e:"水"},{t:"先道歉，不想伤感情",e:"土"},{t:"讲道理，分对错",e:"金"}]},
-  { q: "工作/学习中，你最像哪种？", opts: [{t:"效率高、节奏快，喜欢挑战",e:"火"},{t:"细节控、追求完美，慢工出细活",e:"金"},{t:"靠谱稳健，交给你的事一定办好",e:"土"},{t:"创意多、点子活，但容易三分钟热度",e:"木"}]},
-  { q: "领导/老师给你安排了一个很难的任务，你第一反应是？", opts: [{t:"兴奋！终于有挑战了",e:"火"},{t:"完了完了我做不来",e:"水"},{t:"先接下来，慢慢想办法",e:"土"},{t:"凭什么给我做？",e:"金"}]},
-  { q: "上班/上学摸鱼的时候，你通常在？", opts: [{t:"刷手机刷短视频",e:"火"},{t:"发呆想心事",e:"水"},{t:"偷偷做自己的事（副业/学习）",e:"金"},{t:"跟旁边人聊天",e:"土"}]},
-  { q: "别人对你最常说的一句评价是？", opts: [{t:"\"你好有气场/好有领导力\"",e:"火"},{t:"\"你好温柔/跟你待在一起好舒服\"",e:"木"},{t:"\"你好神秘/完全看不懂你在想什么\"",e:"水"},{t:"\"你好靠谱/有事找你就对了\"",e:"土"}]},
-  { q: "你觉得自己最大的优点是？", opts: [{t:"热情开朗，跟谁都能聊",e:"火"},{t:"温柔善良，不跟人争",e:"木"},{t:"靠谱踏实，交给他放心",e:"土"},{t:"聪明理性，什么都想得到",e:"金"}]},
-  { q: "你觉得自己更像哪种动物？", opts: [{t:"猫——独立、傲娇、看心情",e:"水"},{t:"狗——忠诚、热情、粘人",e:"土"},{t:"鹰——锐利、独立、眼光高",e:"金"},{t:"鹿——温柔、敏感、有点胆小",e:"木"}]},
-  { q: "如果用一个词形容你自己，你选？", opts: [{t:"热烈",e:"火"},{t:"温柔",e:"木"},{t:"稳重",e:"土"},{t:"深邃",e:"水"}]}
+  { q: "周末终于没人找你了，你的第一反应是？", opts: [
+    {t:"立刻约人！一个人待着多浪费",e:"火",tags:["外向","主动"]},
+    {t:"终于可以点外卖追剧打游戏了",e:"水",tags:["内向","安稳"]},
+    {t:"把房间收拾干净、做顿好饭",e:"土",tags:["务实","安稳"]},
+    {t:"去没人的地方走走，一个人待着也很爽",e:"木",tags:["内向","直觉"]},
+    {t:"约上三五好友来场说走就走的小旅行",e:"火",tags:["外向","冒险"]},
+    {t:"提前列好周末计划，安排得明明白白",e:"金",tags:["逻辑","主动"]}]},
+  { q: "朋友合照里，你通常是那个？", opts: [
+    {t:"站C位负责摆pose搞气氛的",e:"火",tags:["外向","主动"]},
+    {t:"躲在镜头后面偷拍别人的",e:"水",tags:["内向","直觉"]},
+    {t:"帮大家拎包、照顾每个人情绪的",e:"土",tags:["感性","务实"]},
+    {t:"表情最鬼马、最出片的那个",e:"木",tags:["外向","直觉"]},
+    {t:"负责掌镜构图、保证每张都好看的",e:"金",tags:["逻辑","主动"]},
+    {t:"不拍照，安安静静在旁边笑的那个",e:"水",tags:["内向","安稳"]}]},
+  { q: "你交朋友通常是？", opts: [
+    {t:"朋友遍天下，到哪都能认识新朋友",e:"火",tags:["外向","主动"]},
+    {t:"朋友不多但个个是交心的",e:"水",tags:["内向","感性"]},
+    {t:"老朋友们从小玩到大，不怎么加新朋友",e:"土",tags:["安稳","被动"]},
+    {t:"看感觉，合得来就处，合不来就算",e:"金",tags:["直觉","理性"]},
+    {t:"见到欣赏的人会主动破冰、加微信",e:"火",tags:["外向","主动"]},
+    {t:"慢慢观察很久，确定靠谱才走近",e:"水",tags:["被动","理性"]}]},
+  { q: "你发朋友圈的风格通常是？", opts: [
+    {t:"想发就发，美食自拍旅行什么都发",e:"火",tags:["外向","感性"]},
+    {t:"经常删朋友圈/设三天可见",e:"水",tags:["内向","感性"]},
+    {t:"几乎不发，但会给别人点赞评论",e:"土",tags:["被动","安稳"]},
+    {t:"很少发，一发就是长文/深度内容",e:"金",tags:["理性","逻辑"]},
+    {t:"只发有意思的梗和段子",e:"木",tags:["外向","直觉"]},
+    {t:"发之前会反复斟酌文案和配图",e:"金",tags:["理性","被动"]}]},
+  { q: "朋友约你出去，但你那天特别累，你会？", opts: [
+    {t:"还是去吧，不去怕大家扫兴",e:"土",tags:["被动","感性"]},
+    {t:"直接说不去了，我要躺平",e:"水",tags:["安稳","内向"]},
+    {t:"去，但跟大家说好我提前走",e:"木",tags:["主动","务实"]},
+    {t:"去！换个衣服洗个脸瞬间就精神了",e:"火",tags:["外向","主动"]},
+    {t:"果断拒绝，休息也是重要的事",e:"金",tags:["理性","主动"]},
+    {t:"看心情，兴之所至就出门",e:"木",tags:["直觉","感性"]}]},
+  { q: "在微信群聊里，你通常是？", opts: [
+    {t:"活跃气氛的那个，段子手担当",e:"火",tags:["外向","主动"]},
+    {t:"潜水党，偶尔冒个泡",e:"水",tags:["内向","被动"]},
+    {t:"认真回复每个人的，暖心担当",e:"土",tags:["感性","务实"]},
+    {t:"只发表情包的，话少但存在感强",e:"木",tags:["内向","直觉"]},
+    {t:"群里一有争论就出来讲道理的那个",e:"金",tags:["理性","逻辑"]},
+    {t:"有需要才说话，说完就消失",e:"金",tags:["务实","被动"]}]},
+  { q: "排队买奶茶时有人插队到你前面，你会？", opts: [
+    {t:"直接说：\"您好排队哦\"，不怂",e:"金",tags:["主动","逻辑"]},
+    {t:"懒得计较，心里翻个白眼就算了",e:"水",tags:["被动","安稳"]},
+    {t:"客气地提醒一句，对方道歉就算了",e:"土",tags:["感性","务实"]},
+    {t:"拍下来发闺蜜群吐槽，但不当面说",e:"木",tags:["感性","内向"]},
+    {t:"心平气和地跟对方讲清楚规则",e:"金",tags:["理性","主动"]},
+    {t:"心里气但假装没事，回去越想越气",e:"水",tags:["被动","感性"]}]},
+  { q: "被人误会了，你会？", opts: [
+    {t:"当场解释清楚，不解释不爽",e:"火",tags:["主动","外向"]},
+    {t:"懒得解释，懂我的人自然懂",e:"水",tags:["被动","内向"]},
+    {t:"事后找合适的时机慢慢说清楚",e:"土",tags:["理性","被动"]},
+    {t:"直接用行动证明，说什么都没用",e:"金",tags:["主动","逻辑"]},
+    {t:"会难过很久，希望对方自己发现",e:"水",tags:["感性","内向"]},
+    {t:"发条朋友圈暗示，等对方来问",e:"木",tags:["感性","被动"]}]},
+  { q: "你最受不了别人哪种行为？", opts: [
+    {t:"不坦诚、藏着掖着",e:"金",tags:["逻辑","理性"]},
+    {t:"整天负能量、只会抱怨",e:"火",tags:["外向","感性"]},
+    {t:"不守承诺、说话不算数",e:"土",tags:["务实","理性"]},
+    {t:"太黏人、没有自己的生活",e:"水",tags:["被动","浪漫"]},
+    {t:"阴阳怪气、说话带刺",e:"木",tags:["内向","感性"]},
+    {t:"当面一套背后一套",e:"金",tags:["理性","逻辑"]}]},
+  { q: "你知道有人在背后说你坏话，你会？", opts: [
+    {t:"直接找对方当面对质",e:"金",tags:["主动","逻辑"]},
+    {t:"无所谓，随便说去吧",e:"水",tags:["被动","安稳"]},
+    {t:"难过但不说，自己慢慢消化",e:"土",tags:["感性","内向"]},
+    {t:"也在别人那里说回去",e:"火",tags:["外向","主动"]},
+    {t:"先反思自己是不是真有问题",e:"水",tags:["理性","内向"]},
+    {t:"拉黑删除，眼不见心不烦",e:"木",tags:["直觉","主动"]}]},
+  { q: "深夜失眠时，你脑子里最常转的是？", opts: [
+    {t:"明天的待办清单，越想越清醒",e:"金",tags:["逻辑","理性"]},
+    {t:"今天哪句话说错了，反复回放",e:"水",tags:["感性","内向"]},
+    {t:"各种不切实际的幻想：中大奖、穿越、谈恋爱",e:"木",tags:["直觉","浪漫"]},
+    {t:"\"人活着到底是为了什么\"这种大问题",e:"水",tags:["直觉","感性"]},
+    {t:"复盘最近的人际关系，琢磨怎么处理",e:"土",tags:["理性","被动"]},
+    {t:"计划下一次旅行/想买的东西",e:"火",tags:["浪漫","主动"]}]},
+  { q: "压力大的时候，你会？", opts: [
+    {t:"大吃一顿/购物/找人倾诉，发泄出来就好",e:"火",tags:["外向","感性"]},
+    {t:"一个人待着，谁也不想理，慢慢消化",e:"水",tags:["内向","安稳"]},
+    {t:"打扫房间/整理东西，环境整齐心情就好",e:"土",tags:["务实","安稳"]},
+    {t:"立刻列计划解决问题，压力变动力",e:"金",tags:["逻辑","主动"]},
+    {t:"出去运动跑步，出出汗就舒服了",e:"火",tags:["主动","冒险"]},
+    {t:"写日记/写下来，把情绪梳理清楚",e:"木",tags:["理性","内向"]}]},
+  { q: "看一部虐心电影，你的反应是？", opts: [
+    {t:"哭得稀里哗啦，纸巾用一包",e:"火",tags:["感性","外向"]},
+    {t:"表面没什么，回家偷偷难过好几天",e:"水",tags:["感性","内向"]},
+    {t:"代入感太强，走不出来",e:"木",tags:["感性","直觉"]},
+    {t:"很冷静地分析剧情逻辑",e:"金",tags:["理性","逻辑"]},
+    {t:"看完立刻搜影评，想弄懂导演想表达什么",e:"金",tags:["理性","主动"]},
+    {t:"看完会emo一整天，需要朋友安慰",e:"土",tags:["感性","被动"]}]},
+  { q: "你上一次大哭是因为什么？", opts: [
+    {t:"看电影/看视频哭的",e:"木",tags:["感性","直觉"]},
+    {t:"压力太大绷不住了",e:"水",tags:["感性","内向"]},
+    {t:"感动的，有人对我好",e:"土",tags:["感性","务实"]},
+    {t:"太久没哭了，想不起来了",e:"金",tags:["理性","逻辑"]},
+    {t:"跟家人/朋友吵架，委屈哭的",e:"火",tags:["感性","外向"]},
+    {t:"没什么原因，就是想哭一场",e:"水",tags:["感性","直觉"]}]},
+  { q: "心情不好的时候，你最常做的事是？", opts: [
+    {t:"吃好吃的",e:"土",tags:["安稳","务实"]},
+    {t:"听歌发呆",e:"水",tags:["内向","感性"]},
+    {t:"找人吐槽",e:"火",tags:["外向","主动"]},
+    {t:"逛街买东西",e:"金",tags:["主动","感性"]},
+    {t:"出门走一走，吹吹风",e:"木",tags:["直觉","冒险"]},
+    {t:"睡觉，睡一觉就好了",e:"水",tags:["安稳","被动"]}]},
+  { q: "做重要决定时，你通常？", opts: [
+    {t:"凭直觉，第一感觉就是它",e:"火",tags:["直觉","主动"]},
+    {t:"列利弊表分析清楚再动",e:"金",tags:["逻辑","理性"]},
+    {t:"问朋友问家人，大家觉得好就好",e:"土",tags:["被动","务实"]},
+    {t:"跟着感觉走，事后才想为什么",e:"水",tags:["直觉","感性"]},
+    {t:"先收集所有信息再慢慢权衡",e:"金",tags:["理性","被动"]},
+    {t:"边做边调整，先迈出第一步",e:"木",tags:["主动","冒险"]}]},
+  { q: "如果用一种颜色代表你现在的状态，你选？", opts: [
+    {t:"烈焰红/落日橙",e:"火",tags:["外向","感性"]},
+    {t:"草木绿/樱花粉",e:"木",tags:["浪漫","感性"]},
+    {t:"大地棕/米白色",e:"土",tags:["安稳","务实"]},
+    {t:"夜空蓝/玄黑色",e:"水",tags:["内向","理性"]},
+    {t:"鎏金/古铜",e:"金",tags:["理性","逻辑"]},
+    {t:"雾霾紫/星空紫",e:"木",tags:["直觉","浪漫"]}]},
+  { q: "流落荒岛只能带三样东西，你会选？", opts: [
+    {t:"种子、花苗、小动物——把荒岛变成家",e:"木",tags:["浪漫","安稳"]},
+    {t:"火种、工具、武器——先活下来再说",e:"金",tags:["逻辑","主动"]},
+    {t:"书、画具、乐器——精神世界不能丢",e:"水",tags:["感性","浪漫"]},
+    {t:"家人照片、日记、信物——带着回忆走",e:"土",tags:["感性","务实"]},
+    {t:"求生手册、指南针、急救包——按计划来",e:"金",tags:["理性","逻辑"]},
+    {t:"什么都不带，靠脑子现想办法",e:"火",tags:["直觉","冒险"]}]},
+  { q: "买东西的时候，你通常？", opts: [
+    {t:"看上就买，不纠结",e:"火",tags:["直觉","主动"]},
+    {t:"比价半天，买最划算的",e:"金",tags:["逻辑","理性"]},
+    {t:"问朋友意见，大家说哪个好就买哪个",e:"土",tags:["被动","务实"]},
+    {t:"看感觉，眼缘最重要",e:"木",tags:["直觉","感性"]},
+    {t:"只看评价和数据，参数说话",e:"金",tags:["理性","逻辑"]},
+    {t:"纠结半天，最后买了第一眼看中的",e:"水",tags:["直觉","被动"]}]},
+  { q: "谈恋爱时，你更像哪种？", opts: [
+    {t:"热烈主动，喜欢就追，爱得轰轰烈烈",e:"火",tags:["主动","浪漫"]},
+    {t:"慢热试探，需要很久才放下防备",e:"水",tags:["被动","内向"]},
+    {t:"照顾对方生活起居，像妈妈/爸爸型",e:"土",tags:["务实","感性"]},
+    {t:"理性独立，在一起也要各自空间",e:"金",tags:["理性","主动"]},
+    {t:"仪式感拉满，纪念日惊喜一个不落",e:"木",tags:["浪漫","感性"]},
+    {t:"直接大方，喜欢就直说，不搞暧昧",e:"火",tags:["主动","外向"]}]},
+  { q: "在一段关系里，你最像哪种？", opts: [
+    {t:"付出型，我对你好就想你也对我好",e:"土",tags:["感性","务实"]},
+    {t:"作精型，没事就想试探你爱不爱我",e:"水",tags:["感性","浪漫"]},
+    {t:"懂事型，不添麻烦，你忙你的",e:"土",tags:["被动","安稳"]},
+    {t:"独立型，我自己能搞定，你别管我",e:"金",tags:["理性","主动"]},
+    {t:"浪漫型，总想给对方惊喜",e:"木",tags:["浪漫","主动"]},
+    {t:"冷静型，矛盾都用沟通解决",e:"金",tags:["理性","逻辑"]}]},
+  { q: "你喜欢一个人的表现是？", opts: [
+    {t:"主动接近，制造偶遇",e:"火",tags:["主动","外向"]},
+    {t:"偷偷关注，不敢让对方知道",e:"水",tags:["被动","内向"]},
+    {t:"对他好，默默付出",e:"土",tags:["感性","被动"]},
+    {t:"故意怼他，引起他注意",e:"金",tags:["主动","外向"]},
+    {t:"找各种理由跟他聊天",e:"木",tags:["主动","外向"]},
+    {t:"先理性观察，判断合不合适再说",e:"金",tags:["理性","逻辑"]}]},
+  { q: "吵架的时候，你通常？", opts: [
+    {t:"当场说清楚，不隔夜",e:"火",tags:["主动","外向"]},
+    {t:"冷战，等对方先找我",e:"水",tags:["被动","内向"]},
+    {t:"先道歉，不想伤感情",e:"土",tags:["感性","被动"]},
+    {t:"讲道理，分对错",e:"金",tags:["理性","逻辑"]},
+    {t:"吵着吵着笑了，气不起来",e:"木",tags:["感性","直觉"]},
+    {t:"回避话题，等大家冷静再说",e:"水",tags:["理性","被动"]}]},
+  { q: "工作/学习中，你最像哪种？", opts: [
+    {t:"效率高、节奏快，喜欢挑战",e:"火",tags:["主动","冒险"]},
+    {t:"细节控、追求完美，慢工出细活",e:"金",tags:["理性","逻辑"]},
+    {t:"靠谱稳健，交给你的事一定办好",e:"土",tags:["务实","安稳"]},
+    {t:"创意多、点子活，但容易三分钟热度",e:"木",tags:["直觉","浪漫"]},
+    {t:"目标感强，先定计划再执行",e:"金",tags:["逻辑","主动"]},
+    {t:"协作型，喜欢大家一起头脑风暴",e:"火",tags:["外向","主动"]}]},
+  { q: "领导/老师给你安排了一个很难的任务，你第一反应是？", opts: [
+    {t:"兴奋！终于有挑战了",e:"火",tags:["主动","冒险"]},
+    {t:"完了完了我做不来",e:"水",tags:["被动","内向"]},
+    {t:"先接下来，慢慢想办法",e:"土",tags:["务实","安稳"]},
+    {t:"凭什么给我做？",e:"金",tags:["主动","理性"]},
+    {t:"立刻开始拆解任务、列计划",e:"金",tags:["逻辑","主动"]},
+    {t:"先找有经验的人请教怎么做",e:"土",tags:["被动","务实"]}]},
+  { q: "上班/上学摸鱼的时候，你通常在？", opts: [
+    {t:"刷手机刷短视频",e:"火",tags:["感性","外向"]},
+    {t:"发呆想心事",e:"水",tags:["内向","感性"]},
+    {t:"偷偷做自己的事（副业/学习）",e:"金",tags:["逻辑","主动"]},
+    {t:"跟旁边人聊天",e:"土",tags:["外向","感性"]},
+    {t:"逛购物网站，看到喜欢的就加购物车",e:"木",tags:["感性","浪漫"]},
+    {t:"写待办清单，规划接下来的事情",e:"金",tags:["理性","逻辑"]}]},
+  { q: "别人对你最常说的一句评价是？", opts: [
+    {t:"\"你好有气场/好有领导力\"",e:"火",tags:["主动","外向"]},
+    {t:"\"你好温柔/跟你待在一起好舒服\"",e:"木",tags:["感性","内向"]},
+    {t:"\"你好神秘/完全看不懂你在想什么\"",e:"水",tags:["内向","理性"]},
+    {t:"\"你好靠谱/有事找你就对了\"",e:"土",tags:["务实","安稳"]},
+    {t:"\"你好聪明/反应好快\"",e:"金",tags:["逻辑","理性"]},
+    {t:"\"你好有趣/跟你在一起不会无聊\"",e:"木",tags:["外向","直觉"]}]},
+  { q: "你觉得自己最大的优点是？", opts: [
+    {t:"热情开朗，跟谁都能聊",e:"火",tags:["外向","主动"]},
+    {t:"温柔善良，不跟人争",e:"木",tags:["感性","内向"]},
+    {t:"靠谱踏实，交给他放心",e:"土",tags:["务实","安稳"]},
+    {t:"聪明理性，什么都想得到",e:"金",tags:["逻辑","理性"]},
+    {t:"有想象力，总能想出别人想不到的",e:"木",tags:["直觉","浪漫"]},
+    {t:"勇敢果断，想到就去做",e:"火",tags:["主动","冒险"]}]},
+  { q: "你觉得自己更像哪种动物？", opts: [
+    {t:"猫——独立、傲娇、看心情",e:"水",tags:["内向","直觉"]},
+    {t:"狗——忠诚、热情、粘人",e:"土",tags:["外向","感性"]},
+    {t:"鹰——锐利、独立、眼光高",e:"金",tags:["理性","主动"]},
+    {t:"鹿——温柔、敏感、有点胆小",e:"木",tags:["感性","内向"]},
+    {t:"狐狸——聪明、机灵、会来事",e:"火",tags:["外向","直觉"]},
+    {t:"鲸——安静、深沉、有自己的世界",e:"水",tags:["内向","理性"]}]},
+  { q: "如果用一个词形容你自己，你选？", opts: [
+    {t:"热烈",e:"火",tags:["外向","感性"]},
+    {t:"温柔",e:"木",tags:["感性","内向"]},
+    {t:"稳重",e:"土",tags:["务实","安稳"]},
+    {t:"深邃",e:"水",tags:["内向","理性"]},
+    {t:"锐利",e:"金",tags:["逻辑","主动"]},
+    {t:"灵动",e:"木",tags:["直觉","外向"]}]}
 ];
 
 // ========== 异兽数据（丰富版） ==========
@@ -477,10 +768,120 @@ function getBeast(energy) {
   return map[main+"-"+sub] || map[sub+"-"+main] || "鲲鹏";
 }
 
+// ========== 12兽五行组合（缘分榜用） ==========
+const BEAST_RANK_MAP = {
+  "九尾狐":["木","火"],"凤凰":["火","木"],"毕方":["火","金"],"鹿蜀":["木","土"],
+  "当康":["土","木"],"白泽":["土","金"],"天狗":["金","火"],"麒麟":["金","土"],
+  "鲛人":["水","木"],"何罗鱼":["水","金"],"精卫":["水","火"],"鲲鹏":["水","土"]
+};
+
+// ========== 性格维度系统 ==========
+const DIMENSIONS = {
+  "社交": {pos:"外向", neg:"内向"},
+  "情绪": {pos:"感性", neg:"理性"},
+  "行动": {pos:"主动", neg:"被动"},
+  "关系": {pos:"浪漫", neg:"务实"},
+  "生活": {pos:"冒险", neg:"安稳"},
+  "思维": {pos:"直觉", neg:"逻辑"}
+};
+
+// ========== 五行开运buff ==========
+const WUXING_BUFF = {
+  "木": {color:"青绿 / 翡翠", num:"3、8", dir:"东方", stone:"翡翠 · 绿松石", note:"木曰曲直，你自带生长的力量，越是低谷越能抽枝发芽。"},
+  "火": {color:"朱红 / 赤金", num:"2、7", dir:"南方", stone:"红玛瑙 · 石榴石", note:"火曰炎上，你天生聚光，走到哪里都是人群里最亮的那团火。"},
+  "土": {color:"大地黄 / 赭石", num:"5、10", dir:"中宫 / 西南", stone:"黄水晶 · 琥珀", note:"土曰稼穑，你厚德载物，越踏实越能结出丰盛的果实。"},
+  "金": {color:"鎏金 / 银白", num:"4、9", dir:"西方", stone:"白水晶 · 金发晶", note:"金曰从革，你锐利通透，关键时刻总能一刀切开迷雾。"},
+  "水": {color:"玄黑 / 黛蓝", num:"1、6", dir:"北方", stone:"黑曜石 · 海蓝宝", note:"水曰润下，你深不可测，静水深流才是你最大的底牌。"}
+};
+const WUXING_COLORS = {"木":"#4caf50","火":"#f44336","土":"#8d6e63","金":"#ffd700","水":"#2196f3"};
+
+// ========== 维度标签细节库（准到冒汗动态生成） ==========
+const TAG_DETAILS = {
+  "外向":["你嘴上说没朋友不行，其实一个人也能过得很爽","你看起来人来疯，但真正交心的人一只手数得过来","你在聚会里负责热场，但散场后常常一个人发呆"],
+  "内向":["你表面安静，心里戏比谁都多","你不爱说话，但你说出口的话都经过三遍思考","你宁愿发消息也不打电话，电话响了你都要做心理建设"],
+  "感性":["你看段子能笑出声，看广告也能哭出来","你听歌会不自觉单曲循环，因为歌词像在说你","你很容易被一句“温暖”的话击中，然后记很久"],
+  "理性":["你连看剧都要分析人物动机，朋友说你职业病","你很少冲动，但一旦决定的事八头牛拉不回","你习惯先想'为什么'，再决定要不要动感情"],
+  "主动":["你嘴上说顺其自然，其实每次都偷偷推了一把","你讨厌等待，想要的东西会自己伸手去拿","你的人生很少靠运气，都是自己争取来的"],
+  "被动":["你心里想了一百遍，嘴上永远说'随便'","你总是等别人先开口，然后说'我也这么想的'","你错过过很多机会，但从来不怪自己"],
+  "浪漫":["你记得每一个纪念日，连第一次约会的天气都记得","你在备忘录里写过给ta的心里话，但从来没发出去","你会因为一片晚霞好看，突然原谅整个世界"],
+  "务实":["你买东西前会列清单，约会前会查攻略","你很少说情话，但ta的喜好你全记在心里","你相信爱是具体的事：一碗热汤、一次接送、一句'到了没'"],
+  "冒险":["你的人生信条是'来都来了'，什么都要试一下","你讨厌一成不变，总在计划下一次出发","你宁可撞南墙，也不想原地打转"],
+  "安稳":["你喜欢熟悉的店、熟悉的人、熟悉的路线","你追求的是把日子过得舒舒服服，不折腾","对你来说，心安就是最大的幸福"],
+  "直觉":["你第一眼就能判断喜不喜欢一个人，而且很少看错","你做选择靠感觉，事后发现感觉总是对的","你信命，但更信自己的第六感"],
+  "逻辑":["你说话喜欢1234，朋友笑你像在做汇报","你连'随便'都要分情况讨论，爱较真但不讨厌","你相信所有问题都能拆解，包括感情"]
+};
+
+// ========== 12兽动态变体（根据用户维度画像选择） ==========
+const beastVariants = {
+  "九尾狐": {
+    friends: {外向:"朋友们觉得你是行走的氛围制造机——有你在的局永远不缺话题和笑点，你能把刚认识的人十分钟内聊成熟人。但只有你自己知道，热闹是给别人的，真正的你其实渴望一个能安静待着也不尴尬的人。",内向:"朋友不多，但每一个都被你拿捏得死死的。你不爱凑热闹，但你出现的时候大家都会眼前一亮——你太会聊天了，偶尔开一次口就能让全场记住你。你的朋友都觉得：'她不是不合群，是不屑于合无趣的群。'"},
+    love: {浪漫:"你谈恋爱像在拍电影——会准备惊喜、会记住细节、会为了见对方一面提前三小时打扮。你享受暧昧期的心跳，也享受被偏爱的感觉。但你要记得：真正的浪漫不是演给对方看，是你在对方身边时那种不用演的放松。",务实:"你看起来很会撩，其实心里清醒得很——你不会因为几句情话就上头，你看的是对方怎么对你、为你做了什么。你不屑于玩套路，但你也绝不允许自己被当傻子。你要的是一个经得起时间考验的人，而不是一阵风。"},
+    work: {冒险:"你天生适合冲——别人还在犹豫的时候你已经出手了。你嗅觉敏锐，总能闻到机会的味道，适合创业、新媒体、任何需要快速反应和临场发挥的赛道。你的问题从来不是不敢，而是要不要'认真'。",安稳:"你在熟悉的环境里最能发光——你擅长经营关系，把每个合作方都处成朋友。适合运营、公关、HR这类需要长线积累的岗位。你看起来云淡风轻，其实每一步都算过账，稳中求进才是你的节奏。"}
+  },
+  "凤凰": {
+    friends: {外向:"你是朋友圈里的精神领袖——大家有事第一个想到你，因为你有主意、有气场、说干就干。你到哪都是焦点，但不是靠吵，是靠那份'这事我来'的担当。朋友们怕你，更服你。",内向:"你话不多，但每句话都有分量。你不需要靠热场来证明存在感——你在，大家心里就有底。朋友们很少见你情绪化，但真出事的时候，第一个站出来的永远是你。你的沉默不是冷漠，是你在扛。"},
+    love: {浪漫:"你在外面是女王，在爱人面前却会偷偷变回小孩——想要被哄、被记得、被当成例外。你要的爱情是有排面的：公开、坚定、大大方方。你愿意为对方燃烧，但前提是对方值得你低头。",务实:"你爱得很有原则——不搞暧昧、不拖泥带水、不为了恋爱降低自己的标准。你看重的是两个人的未来有没有奔头，而不是一时的甜。你不怕吃苦，但你怕的是没有结果的苦。"},
+    work: {冒险:"你是那种'给我一个支点就敢撬地球'的人。越是有挑战的事你越兴奋，越是没人敢接的活你越要拿下。你适合扛大旗、带团队、从0到1。但记住：王者不是孤勇，学会让别人帮你分担，你才能飞得更远。",安稳:"你不是没有野心，你是把野心藏在了每一步扎实里。你不抢风头，但重要的事交给你你就一定会做成。你是团队的定海神针——平时不出声，关键时刻一锤定音。你的晋升可能慢一点，但每一步都稳。"}
+  },
+  "毕方": {
+    friends: {外向:"你是朋友里那个'有趣的怪人'——你的脑回路跟别人不一样，聊起你喜欢的东西能滔滔不绝，聊到无聊的话题立刻掉线。懂你的人觉得你是宝藏，不懂你的人觉得你难搞。你无所谓，因为你只在意对的人。",内向:"你天生不合群，也懒得装合群。聚会你去得少，但你去了就是高质量对话——不是客套，是真的聊到点子上。你的朋友不多，但每一个都跟你同频。你享受独处，但你也渴望遇到'懂你奇怪'的人。"},
+    love: {浪漫:"你爱一个人是因为'灵魂碰撞'——聊得来比长得帅重要，懂你的梗比会撩重要。你会为对方写歌、画图、做各种别人看不懂但很用心的事。你要的是精神伴侣，不是搭伙过日子。",务实:"你不黏人，也不爱查岗——你觉得好的关系是各自有空间，彼此信任。你表达爱的方式很实在：记住对方随口说过的话，然后默默做到。你不玩虚的，爱不爱，看行动。"},
+    work: {冒险:"你不适合被安排，适合自己去闯。自由职业、独立开发、小众赛道——越没人走的路你越有兴趣。你一个人就能成一支队伍，但你最需要的不是能力，是把自己'卖出去'的勇气。",安稳:"你在专业领域里越钻越深，是那种'一个人扛起一个技术点'的人。你不喜欢办公室政治，只想安静地做好手头的事。适合技术、研究、创作型岗位——你的价值不在话多，在作品说话。"}
+  },
+  "鹿蜀": {
+    friends: {外向:"你是朋友堆里的温柔担当——你不一定是话最多的，但你一定是最让人安心的。大家吵架了找你评理，难过了找你倾诉，你总能用最温柔的方式接住所有人。你像一床棉被，平时不显眼，冷的时候最需要。",内向:"你不爱张扬，但你的好朋友们都知道你有多暖——你记得每个人的生日、每个人爱吃什么、每个人最近遇到了什么难事。你付出得很安静，也从不说出口。你这样的人，遇到一个都是福气。"},
+    love: {浪漫:"你的爱是细水长流的浪漫——你会为对方准备热汤、留灯、记住所有纪念日。你不追求轰轰烈烈，但你的温柔里藏着最深的在意。你要找的是一个能看见你付出、并愿意接住你的人。",务实:"你爱得踏实——不谈虚的，直接照顾对方的生活。你记得ta的过敏源、ta的作息、ta的压力。你的爱是具体的、可触摸的。但别忘了：你也值得被照顾，别总是那个'懂事'的人。"},
+    work: {冒险:"你看起来温和，其实心里也有想闯的念头——只是你习惯把别人的需求放在前面。你适合既能发挥共情力、又能被看见的岗位。记住：温柔不是退让，你的善良要有锋芒。",安稳:"你是团队里的万能润滑剂——有你在，气氛就和谐，矛盾就化解。你适合教育、咨询、服务、HR这类跟人深度打交道的领域。你的优势不是冲，是持久——你在的地方，就会慢慢变好。"}
+  },
+  "当康": {
+    friends: {外向:"你是朋友群里的快乐开关——只要你在，冷场？不存在。你能把最无聊的事讲成段子，能把最尴尬的场面圆回来。大家跟你在一起就放松，因为你真实、不装、不端着。你这样的人，走到哪都自带饭局。",内向:"你看起来大大咧咧，其实心里门儿清——你知道谁对你好，谁只是客套。你的朋友不多但都是真朋友，因为你不屑于维持表面关系。你宁愿一个人吃顿好的，也不想去无意义的局里假笑。"},
+    love: {浪漫:"你表达爱的方式很实在：带你吃好吃的、给你点外卖、把ta的零食柜塞满。你不怎么会说情话，但你做的每件事都在说'我在乎你'。你的恋爱哲学是：开心最重要，别的都是小事。",务实:"你选对象特别接地气——不看脸不看钱，看跟ta在一起开不开心、轻不轻松。你讨厌作来作去的关系，你要的是那种一起撸串、一起躺平、一起笑到肚子疼的搭子。简单，但千金难换。"},
+    work: {冒险:"你心态好到能扛事——别人焦虑的时候你在吃，别人内卷的时候你在找乐子。但别小看你的松弛，关键时刻你比谁都清醒。你适合轻松有人情味的环境，你的福气都在'人缘'二字上。",安稳:"你是团队里的开心果+定心丸——有你在，气氛就松快，事情也推进得顺。你不争不抢，但该你上的时候你从不掉链子。适合行政、活动、服务型岗位。你的贵人运很好，因为你招人喜欢。"}
+  },
+  "白泽": {
+    friends: {外向:"你是朋友群里的'活百科'——什么问题到了你这都有答案，什么纠结到了你这都能理清。大家觉得你聪明、可靠、什么都能搞定。但偶尔他们也希望你别那么'对'，偶尔也允许自己糊涂一下。",内向:"你话不多，但你一开口就是重点。朋友们遇事爱找你分析，因为你冷静、客观、不带情绪。你不爱参与八卦，但你记得每个人说过的话。你看起来疏离，其实你一直在观察和关心着大家。"},
+    love: {浪漫:"你嘴上理性，其实心里偷偷向往那种'不讲道理'的爱情——那个让你不用分析、不用权衡、只想傻乐的人。你分析过所有数据，却算不准心动。遇到那个人，你才知道原来'没道理'这么迷人。",务实:"你谈恋爱像做项目——会评估、会规划、会看长期。你不信一见钟情，你信日久见人心。你的爱不张扬但很稳：ta需要的时候你一定在。你要的不是轰轰烈烈，是确定和安心。"},
+    work: {冒险:"你有别人没有的冷静和判断力——别人慌的时候，你已经列出了1234。你适合需要决策、分析、规划的岗位，你的理性就是你最大的武器。但别忘了：偶尔相信直觉，直觉也是经验的总和。",安稳:"你是那种'交给ta就放心'的人——问题到你手里，你总能拆解得清清楚楚。你适合咨询、产品、财务、管理这类需要深度思考的领域。你不需要很吵，你的专业就是你的话语权。"}
+  },
+  "天狗": {
+    friends: {外向:"你是朋友群里的'护崽狂魔'——谁敢动我朋友，我跟谁急。你看着凶，其实最重义气：朋友半夜有事你第一个到，朋友被欺负你第一个出头。你的朋友不多，但每一个都是过命的交情。",内向:"你对生人高冷，对熟人话痨——两种模式切换自如。你不轻易交心，但一旦认定了谁，就掏心掏肺。你的温柔都藏在不耐烦的语气里：'又怎么了''跟你说多少次了'——翻译过来都是'我在乎你'。"},
+    love: {浪漫:"你嘴硬心软第一名——明明想对方想得要命，发出去的消息却是'你忙你的'。你吃醋了不说，自己憋着，但动作全写在脸上。你需要一个能听懂你反话的人，知道你的'滚'其实是'别走'。",务实:"你爱得很认真——不说甜言蜜语，但对方的事你都放在心上：ta随口说想吃什么，下次见面你就带了。你的占有欲强但克制，你希望对方是'我的人'，但你更希望ta自由快乐。"},
+    work: {冒险:"你是团队里的'定海神针+敢死队'——原则问题上寸步不让，关键时刻敢站出来扛。你适合需要胆量和原则的岗位，比如管理、风控、审计。你的忠诚度极高，但也要学会挑对值得效忠的地方。",安稳:"你做事讲原则、重规则，是领导最放心的人。你不喜欢弯弯绕绕，就喜欢直来直去——适合规则明确、赏罚分明的环境。你的执行力一流，但你也要学会：有些事不是非黑即白。"}
+  },
+  "麒麟": {
+    friends: {外向:"你看起来高冷，其实是懒得装熟。你在朋友面前其实很放松，甚至会有点幼稚——但只有少数人见过这一面。你的朋友圈子小但精，每一个都是你认真筛选过的。你不迎合，你只吸引。",内向:"你不爱社交，但你的存在感不需要靠说话——你在，大家就莫名觉得稳。朋友们觉得你'有分量'：你说一句话，顶别人说十句。你的孤独是主动选的，因为你不屑于无效社交。"},
+    love: {浪漫:"你不动心则已，一动心就是一生一世。你不玩暧昧、不骑驴找马，你看上的人一定是你认真想过的。你的爱有分寸、有排面，但你也需要一个人能打破你的'端着'——让你放下架子，做回小孩。",务实:"你挑对象眼光很高——不看脸，看格局、看人品、看两个人能不能并肩走。你不追人，你吸引人。你需要的不是仰望你的人，而是能跟你平视、敢跟你开玩笑的人。"},
+    work: {冒险:"你有格局、有担当，是天生的掌舵人。你适合扛大任——带团队、定方向、做决策。你不屑于小打小闹，你要做就做大事。但记住：高处不胜寒，学会把功劳分出去，你才能走得更远。",安稳:"你是靠专业吃饭的人——你有门槛、有真本事，不靠嘴皮子混日子。你适合需要资历和沉淀的领域。你不抢功、不钻营，但你的位置没人能撼动。你越沉稳，越值钱。"}
+  },
+  "鲛人": {
+    friends: {外向:"你是朋友群里的'氛围诗人'——你总能说出大家心里有但说不出的感受，一段话能把朋友说哭。你感性、细腻、共情力爆表。但朋友们也知道：你情绪上来的时候，需要有人接住你。",内向:"你的内心世界比谁都丰富——你看到夕阳会愣神，听到老歌会想起某个人。你不常表达，但你把感受都写在心里、写在歌里、写在深夜的朋友圈里。懂你的人知道：你的沉默里藏着一整片海。"},
+    love: {浪漫:"你是天生的恋爱脑——会准备惊喜、会写小作文、会把每一个瞬间都过成纪念日。你要的爱情有光：心动、浪漫、灵魂共鸣。但小心别把恋爱过成苦情戏——真正好的爱，是把你从情绪里捞出来，而不是陪你一起沉下去。",务实:"你看起来感性，其实心里有杆秤——你知道谁值得、谁只是在消耗你。你渴望浪漫，但也清醒地知道：浪漫要落地成柴米油盐，才能长久。你要的是一个能接住你情绪，也能陪你过日子的'锚'。"},
+    work: {冒险:"你的感受力就是生产力——别人写不出的文案你写得出，别人想不出的创意你想得到。你适合创作、设计、自媒体、内容行业。你的敏感不是弱点，是你独有的天赋。敢把内心摊开，你就赢了。",安稳:"你适合做跟'美'和'人'有关的事——文字、影像、体验设计。你不适合冰冷的机械性工作，你会枯萎。你需要一个能包容你情绪、给你创作空间的环境。你的价值，要放在对的地方才能发光。"}
+  },
+  "何罗鱼": {
+    friends: {外向:"你是朋友圈里的'千面手'——跟A聊八卦，跟B谈理想，跟C讲段子，每个人认识的都是不同的你。你适应力极强，什么场合都能接住。但偶尔夜深人静，你会想：这么多面的我，哪一面才是真的？",内向:"你不喜欢被人看透——不是装，是你连自己都没完全搞懂自己。你会在不同环境里切换模式，但切换久了也会累。你渴望有一个人能让你不用切换，做最本来的自己。"},
+    love: {浪漫:"你在每段关系里都会变成对方喜欢的样子——这让你很受欢迎，但也让你很累。你需要一个人让你明白：你不需要讨好任何人，你本来的样子就值得被爱。真正的爱，是看见你所有面，依然选择你。",务实:"你太会察言观色了，谈恋爱时你会自动调整成'最合适'的模式。但时间久了你会发现：最舒服的关系，是你可以卸下所有'模式'，做回那个会犯懒、会发脾气、会幼稚的真实的你。"},
+    work: {冒险:"你是天生的跨界选手——什么都会一点，什么都能上手，团队里缺什么你就能补什么。你适合创业、项目管理、新媒体、任何需要多面手的领域。但你要想清楚：你最强的'适应'，也是你最大的'模糊'——找到你想深耕的那一件事。",安稳:"你是团队里的'万金油'——哪里需要哪里搬，而且搬过去就能用。你的适应力让领导离不开你，但也容易让你成为'什么都做、什么都没被看见'的人。学会把一件事做出代表作，你的价值才会被记住。"}
+  },
+  "精卫": {
+    friends: {外向:"你是朋友群里的'热血担当'——认准的事谁也拦不住，别人劝你放弃你偏要证明自己。朋友一开始觉得你轴，最后都被你折服。你的执念是别人眼里的缺点，但正是它让你活成了励志故事。",内向:"你不爱说漂亮话，但你会用行动证明一切。你说'算了'，其实从没真正放下。你的坚持都藏在沉默里——别人放弃了，你还在；别人退缩了，你还在。你这种人，时间会给你答案。"},
+    love: {浪漫:"你爱一个人就是一辈子——哪怕受伤了、哪怕被劝分手，你还是会再试一次。你的长情和专一是优点，但你要分清楚：执念不等于爱。有些人值得你填海，有些人只值得你转身。",务实:"你在感情里其实很清醒——你不是看不清，你是不想承认。你愿意给机会、愿意等、愿意熬，是因为你重情。但你要记住：你的真心很贵，别让它贬值。该放下的时候，要舍得放下。"},
+    work: {冒险:"你是那种'五年磨一剑'的人——别人做三个月就放弃的事，你能做三年。你适合创业、科研、深耕一个领域。你不是最聪明的，但你是最能熬的。时间是你的朋友，坚持是你的武器。",安稳:"你不怕慢，只怕停——你适合需要长线积累的领域，越做越值钱。你不跟人比快，你跟自己比久。别人换赛道的时候你在深耕，等风来的时候，你已经在山顶了。你的韧性，是别人偷不走的。"}
+  },
+  "鲲鹏": {
+    friends: {外向:"你看起来随和好相处，其实心里有一片海——你不轻易露锋芒，但懂你的人都知道你深不可测。你不爱争，不是争不过，是你觉得没必要。等你真正出手那天，所有人都得重新认识你。",内向:"你话不多，但你的沉默里有内容——朋友们觉得你'看起来普通但其实不简单'。你不炫耀、不声张，但关键时刻你总能一锤定音。你享受独处，因为你在等风、在蓄力、在养自己的局。"},
+    love: {浪漫:"你爱得大气——不黏人、不查岗，但你会在对方看不见的地方安排好一切。你要的是势均力敌的爱：两个人各自生长，又互相仰望。你不需要天天说爱，但你的爱都在行动里，沉甸甸的。",务实:"你不轻易动心，但一动心就认真规划未来。你不玩暧昧、不养鱼，你看中的是长远的可能。你的爱很稳：像深海，表面平静，底下全是深情。你需要一个能懂你'不声不响'的人。"},
+    work: {冒险:"你有别人没有的远见——别人看这个季度，你看五年后。你适合创业、战略、投资、大项目。你前期可能不起眼，但时间会证明你的判断。你的格局是你的护城河，别让它被琐事消耗。",安稳:"你是典型的'厚积薄发'——前期可能慢，但你的每一步都在积累势能。你适合需要深度思考的领域，你的洞察力是别人花钱都买不来的。别急，你只是比别人飞得晚，但飞得远。"}
+  }
+};
+
 // ========== 状态 ==========
 let currentPassword = "";
 let currentQuestion = 0;
 let answers = new Array(questions.length).fill(null);
+
+// ========== 统一密码 ==========
+const UNIFIED_PASSWORD = "Xk9mPv2nQw7Rt4Yz8LbC";
 
 // ========== 页面切换 ==========
 function showPage(id) {
@@ -490,44 +891,14 @@ function showPage(id) {
   window.scrollTo(0, 0);
 }
 
-// ========== 密码 ==========
-async function checkPassword() {
+function checkPassword() {
   const pwd = document.getElementById("password-input").value.trim();
   const errEl = document.getElementById("password-error");
   errEl.textContent = "";
   if (!pwd) { errEl.textContent = "请输入密码"; return; }
-  const btn = event.target;
-  btn.textContent = "验证中...";
-  btn.disabled = true;
-  try {
-    const { data, error } = await supabase
-      .from("passwords")
-      .select("*")
-      .eq("password", pwd)
-      .single();
-    if (error || !data) {
-      errEl.textContent = "密码不正确，请检查后重试";
-      btn.textContent = "开 始 测 评";
-      btn.disabled = false;
-      return;
-    }
-    if (data.used_count >= data.max_uses) {
-      errEl.textContent = "该密码已用完3次测试机会";
-      btn.textContent = "开 始 测 评";
-      btn.disabled = false;
-      return;
-    }
-    currentPwdId = data.id;
-    currentPassword = pwd;
-    renderBeastGrid();
-    showPage("page-intro");
-    btn.textContent = "开 始 测 评";
-    btn.disabled = false;
-  } catch (e) {
-    errEl.textContent = "网络错误，请稍后重试";
-    btn.textContent = "开 始 测 评";
-    btn.disabled = false;
-  }
+  if (pwd !== UNIFIED_PASSWORD) { errEl.textContent = "密码不正确，请检查后重试"; return; }
+  renderBeastGrid();
+  showPage("page-intro");
 }
 
 // ========== 图鉴 ==========
@@ -544,9 +915,12 @@ function renderQuestion() {
   document.getElementById("question-num").textContent = `第 ${currentQuestion+1} / ${questions.length} 题`;
   document.getElementById("question-text").textContent = q.q;
   document.getElementById("options").innerHTML = q.opts.map((o,i) =>
-    `<div class="option ${answers[currentQuestion]===i?"selected":""}" onclick="selectOption(${i})"><span class="label">${"ABCD"[i]}</span>${o.t}</div>`
+    `<div class="option ${answers[currentQuestion]===i?"selected":""}" onclick="selectOption(${i})"><span class="label">${"ABCDEF"[i]}</span>${o.t}</div>`
   ).join("");
   document.getElementById("progress-fill").style.width = ((currentQuestion+1)/questions.length*100)+"%";
+  const spark = document.getElementById("progress-spark");
+  const bar = spark.parentElement;
+  spark.style.left = `calc(${(currentQuestion+1)/questions.length*100}% - 9px)`;
   document.getElementById("btn-prev").style.visibility = currentQuestion===0?"hidden":"visible";
   document.getElementById("btn-next").textContent = currentQuestion===questions.length-1?"查看结果":"下一题";
 }
@@ -558,32 +932,92 @@ function nextQuestion() {
   else{showResult();}
 }
 
-// ========== 结果 ==========
+// ========== 结果（动态多样化） ==========
 function showResult() {
   const energy = {"木":0,"火":0,"土":0,"金":0,"水":0};
-  answers.forEach((ans,qi)=>{if(ans!==null)energy[questions[qi].opts[ans].e]++;});
+  const dims = {"外向":0,"内向":0,"感性":0,"理性":0,"主动":0,"被动":0,"浪漫":0,"务实":0,"冒险":0,"安稳":0,"直觉":0,"逻辑":0};
+  answers.forEach((ans,qi)=>{
+    if(ans===null) return;
+    const o = questions[qi].opts[ans];
+    energy[o.e]++;
+    (o.tags||[]).forEach(t=>{ if(dims[t]!==undefined) dims[t]++; });
+  });
+  const answered = answers.filter(a=>a!==null).length;
+
+  // 主副五行 + 匹配度
+  const sortedE = Object.entries(energy).sort((a,b)=>b[1]-a[1]);
+  const mainE = sortedE[0][0], subE = sortedE[1][0];
   const beastName = getBeast(energy);
   const beast = beasts[beastName];
+  const matchPct = Math.round((energy[mainE]+energy[subE])/answered*100);
+
+  // 维度画像
+  const profile = {};
+  for (const [dim,{pos,neg}] of Object.entries(DIMENSIONS)) {
+    const p = dims[pos]||0, n = dims[neg]||0, tot = p+n;
+    profile[dim] = tot===0 ? {dir:"均衡", pct:50} : (p>=n ? {dir:pos, pct:Math.round(p/tot*100)} : {dir:neg, pct:Math.round(n/tot*100)});
+  }
+
+  // 动态选文案：按用户画像挑对应变体，无变体用基础版
+  const v = beastVariants[beastName] || {};
+  const friends = (v.friends && profile["社交"].dir!=="均衡" && v.friends[profile["社交"].dir]) ? v.friends[profile["社交"].dir] : beast.friends;
+  const love = (v.love && profile["关系"].dir!=="均衡" && v.love[profile["关系"].dir]) ? v.love[profile["关系"].dir] : beast.love;
+  const work = (v.work && profile["生活"].dir!=="均衡" && v.work[profile["生活"].dir]) ? v.work[profile["生活"].dir] : beast.work;
+
+  // 动态细节：用户最高频4个标签各取1条 + 兽自身细节1条
+  const topTags = Object.entries(dims).sort((a,b)=>b[1]-a[1]).filter(x=>x[1]>0).slice(0,4).map(x=>x[0]);
+  const details = [];
+  topTags.forEach(t=>{ const pool = TAG_DETAILS[t]; if(pool) details.push(pool[Math.floor(Math.random()*pool.length)]); });
+  details.push(beast.details[Math.floor(Math.random()*beast.details.length)]);
+
+  // 缘分榜：12兽契合度
+  const ranking = Object.entries(BEAST_RANK_MAP).map(([name,[e1,e2]])=>({
+    name, pct: Math.round((energy[e1]+energy[e2])/answered*100)
+  })).sort((a,b)=>b.pct-a.pct);
+
+  // 渲染
   document.getElementById("result-img").src = beastImages[beastName];
   document.getElementById("result-name").textContent = beastName;
   document.getElementById("result-tag").textContent = beast.tag;
+  document.getElementById("result-match").innerHTML = "🔥 真身契合度 <span class='match-num'>" + matchPct + "%</span>";
+  document.getElementById("result-sub").textContent = "副守护：" + ({木:"青木",火:"赤火",土:"厚土",金:"鎏金",水:"玄水"}[subE]) + " · " + profile["社交"].dir + " " + profile["社交"].pct + "% · " + profile["情绪"].dir + " " + profile["情绪"].pct + "%";
   document.getElementById("result-quote").textContent = beast.quote;
   document.getElementById("result-personality").textContent = beast.personality;
-  document.getElementById("result-friends").textContent = beast.friends;
-  document.getElementById("result-love").textContent = beast.love;
-  document.getElementById("result-work").textContent = beast.work;
+  document.getElementById("result-friends").textContent = friends;
+  document.getElementById("result-love").textContent = love;
+  document.getElementById("result-work").textContent = work;
   document.getElementById("result-strengths").innerHTML = beast.strengths.map(s=>`<span class="tag">${s}</span>`).join("");
   document.getElementById("result-weaknesses").innerHTML = beast.weaknesses.map(s=>`<span class="tag">${s}</span>`).join("");
   document.getElementById("result-lucky").textContent = beast.lucky;
-  document.getElementById("result-details").innerHTML = beast.details.map(d=>`<div class="detail-item">${d}</div>`).join("");
+  document.getElementById("result-details").innerHTML = details.map(d=>`<div class="detail-item">${d}</div>`).join("");
+
+  // 缘分榜渲染
+  document.getElementById("result-ranking").innerHTML = ranking.map((r,i)=>{
+    const isMe = r.name===beastName;
+    const medal = i===0?"👑 ":i===1?"🥈 ":i===2?"🥉 ":"";
+    return `<div class="rank-row ${isMe?"me":""}"><span class="rname">${medal}${r.name}</span><div class="rbar"><div class="rfill" style="width:${r.pct}%"></div></div><span class="rpct">${r.pct}%</span></div>`;
+  }).join("");
+
+  // 开运buff渲染
+  const buff = WUXING_BUFF[mainE];
+  document.getElementById("result-buff").innerHTML =
+    `<div class="buff-grid">
+      <div class="buff-item"><div class="b-label">🍀 幸运色</div><div class="b-value">${buff.color}</div></div>
+      <div class="buff-item"><div class="b-label">🔢 幸运数字</div><div class="b-value">${buff.num}</div></div>
+      <div class="buff-item"><div class="b-label">🧭 幸运方位</div><div class="b-value">${buff.dir}</div></div>
+      <div class="buff-item"><div class="b-label">💎 守护灵石</div><div class="b-value">${buff.stone}</div></div>
+    </div>
+    <div class="buff-note">「${buff.note}」</div>`;
+
   document.getElementById("result-final").textContent = "💬 " + beast.final;
-  const colors = {"木":"#4caf50","火":"#f44336","土":"#8d6e63","金":"#ffd700","水":"#2196f3"};
+
+  // 五行能量
   const total = questions.length;
   document.getElementById("energy-bar").innerHTML = Object.entries(energy).map(([k,v])=>
-    `<div class="energy-row"><span class="label">${k}</span><div class="bar"><div class="fill" style="width:${v/total*100}%;background:${colors[k]}"></div></div><span class="pct">${Math.round(v/total*100)}%</span></div>`
+    `<div class="energy-row"><span class="label">${k}</span><div class="bar"><div class="fill" style="width:${v/total*100}%;background:${WUXING_COLORS[k]}"></div></div><span class="pct">${Math.round(v/total*100)}%</span></div>`
   ).join("");
+
   showPage("page-result");
-  // 保存到数据库
   saveResultToDB(beastName, energy);
 }
 
@@ -600,24 +1034,32 @@ async function saveResultToDB(beastName, energy) {
 
 // ========== 保存 ==========
 function saveResult() {
-  const hero = document.getElementById("result-hero");
-  const body = document.getElementById("result-body");
   showToast("正在生成图片...");
-  const combined = document.createElement("div");
-  combined.appendChild(hero.cloneNode(true));
-  combined.appendChild(body.cloneNode(true));
-  combined.style.background = "#0f0e17";
-  combined.style.padding = "20px";
-  combined.style.borderRadius = "12px";
-  combined.style.maxWidth = "440px";
-  document.body.appendChild(combined);
-  html2canvas(combined, {scale:2, backgroundColor:"#0f0e17"}).then(canvas=>{
-    document.body.removeChild(combined);
+  const target = document.getElementById("page-result");
+  // 截图前隐藏按钮
+  const buttons = target.querySelectorAll("button");
+  buttons.forEach(b => b.style.display = "none");
+  
+  html2canvas(target, {
+    scale: 2,
+    backgroundColor: "#30264a",
+    useCORS: true,
+    allowTaint: true,
+    logging: false,
+    width: target.offsetWidth,
+    height: target.offsetHeight
+  }).then(canvas=>{
+    // 恢复按钮
+    buttons.forEach(b => b.style.display = "");
     const link = document.createElement("a");
     link.download = "我的山海经异兽结果.png";
     link.href = canvas.toDataURL("image/png");
     link.click();
     showToast("图片已保存");
+  }).catch(err=>{
+    buttons.forEach(b => b.style.display = "");
+    showToast("生成失败，请重试");
+    console.error(err);
   });
 }
 
