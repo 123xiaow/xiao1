@@ -242,6 +242,18 @@ body::before {
 .modal.save-modal .save-img-wrap img { width: 100%; display: block; -webkit-user-select: none; user-select: none; }
 .modal.save-modal .save-tip { font-size: 13px; color: #f4e4bc; margin-bottom: 14px; }
 
+.last-result-entry {
+  margin-top: 18px; padding: 14px 18px; cursor: pointer;
+  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212,175,55,0.45);
+  border-radius: 10px; text-align: center;
+  transition: transform .2s, background .2s;
+}
+.last-result-entry:hover { background: rgba(212,175,55,0.16); transform: translateY(-2px); }
+.last-result-entry .lre-title { font-size: 15px; color: #f4e4bc; font-weight: 700; letter-spacing: 2px; }
+.last-result-entry .lre-summary { font-size: 14px; color: #fff; margin-top: 6px; }
+.last-result-entry .lre-hint { font-size: 12px; color: #d4af37; margin-top: 4px; }
+
 .toast {
   position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
   background: rgba(0,0,0,0.85); color: #fff; padding: 10px 20px; border-radius: 20px;
@@ -279,6 +291,11 @@ body::before {
     <div class="info-box"><div class="info-icon">📊</div><h3>专属报告</h3><p>异兽真身+五行解析+性格深度画像</p></div>
   </div>
   <button class="btn-primary" onclick="startQuiz()">开 始 测 评</button>
+  <div id="last-result-entry" class="last-result-entry" style="display:none;" onclick="viewLastResult()">
+    <div class="lre-title">📜 上次测试结果</div>
+    <div class="lre-summary" id="last-result-summary"></div>
+    <div class="lre-hint">点击查看完整报告</div>
+  </div>
 </div>
 
 <div id="page-quiz" class="page">
@@ -956,8 +973,9 @@ function nextQuestion() {
   else{showResult();}
 }
 
-// ========== 结果（动态多样化） ==========
-function showResult() {
+// ========== 结果（动态多样化 + 本地保存可回看） ==========
+const LAST_RESULT_KEY = "shj_last_result_v1";
+function buildResultData() {
   const energy = {"木":0,"火":0,"土":0,"金":0,"水":0};
   const dims = {"外向":0,"内向":0,"感性":0,"理性":0,"主动":0,"被动":0,"浪漫":0,"务实":0,"冒险":0,"安稳":0,"直觉":0,"逻辑":0};
   answers.forEach((ans,qi)=>{
@@ -999,31 +1017,41 @@ function showResult() {
     name, pct: Math.round((energy[e1]+energy[e2])/answered*100)
   })).sort((a,b)=>b.pct-a.pct);
 
-  // 渲染
-  document.getElementById("result-img").src = beastImages[beastName];
-  document.getElementById("result-name").textContent = beastName;
+  return {
+    beastName, matchPct, mainE, subE,
+    socialDir: profile["社交"].dir, socialPct: profile["社交"].pct,
+    emoDir: profile["情绪"].dir, emoPct: profile["情绪"].pct,
+    friends, love, work, details, ranking, energy
+  };
+}
+
+function renderResult(d) {
+  const beast = beasts[d.beastName];
+  const subName = {木:"青木",火:"赤火",土:"厚土",金:"鎏金",水:"玄水"}[d.subE];
+  document.getElementById("result-img").src = beastImages[d.beastName];
+  document.getElementById("result-name").textContent = d.beastName;
   document.getElementById("result-tag").textContent = beast.tag;
-  document.getElementById("result-match").innerHTML = "🔥 真身契合度 <span class='match-num'>" + matchPct + "%</span>";
-  document.getElementById("result-sub").textContent = "副守护：" + ({木:"青木",火:"赤火",土:"厚土",金:"鎏金",水:"玄水"}[subE]) + " · " + profile["社交"].dir + " " + profile["社交"].pct + "% · " + profile["情绪"].dir + " " + profile["情绪"].pct + "%";
+  document.getElementById("result-match").innerHTML = "🔥 真身契合度 <span class='match-num'>" + d.matchPct + "%</span>";
+  document.getElementById("result-sub").textContent = "副守护：" + subName + " · " + d.socialDir + " " + d.socialPct + "% · " + d.emoDir + " " + d.emoPct + "%";
   document.getElementById("result-quote").textContent = beast.quote;
   document.getElementById("result-personality").textContent = beast.personality;
-  document.getElementById("result-friends").textContent = friends;
-  document.getElementById("result-love").textContent = love;
-  document.getElementById("result-work").textContent = work;
+  document.getElementById("result-friends").textContent = d.friends;
+  document.getElementById("result-love").textContent = d.love;
+  document.getElementById("result-work").textContent = d.work;
   document.getElementById("result-strengths").innerHTML = beast.strengths.map(s=>`<span class="tag">${s}</span>`).join("");
   document.getElementById("result-weaknesses").innerHTML = beast.weaknesses.map(s=>`<span class="tag">${s}</span>`).join("");
   document.getElementById("result-lucky").textContent = beast.lucky;
-  document.getElementById("result-details").innerHTML = details.map(d=>`<div class="detail-item">${d}</div>`).join("");
+  document.getElementById("result-details").innerHTML = d.details.map(x=>`<div class="detail-item">${x}</div>`).join("");
 
   // 缘分榜渲染
-  document.getElementById("result-ranking").innerHTML = ranking.map((r,i)=>{
-    const isMe = r.name===beastName;
+  document.getElementById("result-ranking").innerHTML = d.ranking.map((r,i)=>{
+    const isMe = r.name===d.beastName;
     const medal = i===0?"👑 ":i===1?"🥈 ":i===2?"🥉 ":"";
     return `<div class="rank-row ${isMe?"me":""}"><span class="rname">${medal}${r.name}</span><div class="rbar"><div class="rfill" style="width:${r.pct}%"></div></div><span class="rpct">${r.pct}%</span></div>`;
   }).join("");
 
   // 开运buff渲染
-  const buff = WUXING_BUFF[mainE];
+  const buff = WUXING_BUFF[d.mainE];
   document.getElementById("result-buff").innerHTML =
     `<div class="buff-grid">
       <div class="buff-item"><div class="b-label">🍀 幸运色</div><div class="b-value">${buff.color}</div></div>
@@ -1037,12 +1065,40 @@ function showResult() {
 
   // 五行能量
   const total = questions.length;
-  document.getElementById("energy-bar").innerHTML = Object.entries(energy).map(([k,v])=>
+  document.getElementById("energy-bar").innerHTML = Object.entries(d.energy).map(([k,v])=>
     `<div class="energy-row"><span class="label">${k}</span><div class="bar"><div class="fill" style="width:${v/total*100}%;background:${WUXING_COLORS[k]}"></div></div><span class="pct">${Math.round(v/total*100)}%</span></div>`
   ).join("");
+}
 
+function showResult() {
+  const d = buildResultData();
+  renderResult(d);
   showPage("page-result");
-  saveResultToDB(beastName, energy);
+  saveResultToDB(d.beastName, d.energy);
+  saveLastResult(d);
+}
+
+function saveLastResult(d) {
+  try { d.time = Date.now(); localStorage.setItem(LAST_RESULT_KEY, JSON.stringify(d)); } catch(e) {}
+}
+
+function initLastResultEntry() {
+  const el = document.getElementById("last-result-entry");
+  const sum = document.getElementById("last-result-summary");
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(LAST_RESULT_KEY) || "null"); } catch(e) {}
+  if (el && d && d.beastName) {
+    el.style.display = "block";
+    sum.textContent = d.beastName + " · 契合度 " + (d.matchPct || "?") + "%";
+  }
+}
+
+function viewLastResult() {
+  let d = null;
+  try { d = JSON.parse(localStorage.getItem(LAST_RESULT_KEY) || "null"); } catch(e) {}
+  if (!d || !d.beastName) { showToast("还没有测试记录，快去测一次吧"); return; }
+  renderResult(d);
+  showPage("page-result");
 }
 
 // ========== 结果统计（本地存储，管理后台可看） ==========
@@ -1113,8 +1169,9 @@ function showReward(){document.getElementById("reward-modal").classList.add("act
 function closeModal(id){document.getElementById(id).classList.remove("active");}
 let toastTimer;
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2600);}
-// 页面加载时自动渲染异兽图鉴
+// 页面加载时自动渲染异兽图鉴 + 初始化上次结果入口
 renderBeastGrid();
+initLastResultEntry();
 </script>
 </body>
 </html>
